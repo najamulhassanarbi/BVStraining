@@ -1,6 +1,7 @@
 # weather_report.py
 from datetime import datetime
 
+
 class WeatherReport:
     def __init__(self, calculation_results):
         self.results = calculation_results

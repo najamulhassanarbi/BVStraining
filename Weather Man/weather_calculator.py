@@ -3,6 +3,7 @@
 from datetime import datetime
 from weathercalculationsresults import WeatherCalculationResults
 
+
 class WeatherCalculator:
     def __init__(self, weather_data):
         self.weather_data = weather_data
@@ -10,7 +11,7 @@ class WeatherCalculator:
     def calculate_yearly_extremes(self, year):
         year_data = [d for d in self.weather_data if d.date.year == year]
         results = WeatherCalculationResults()
-        
+
         if not year_data:
             return results
 
