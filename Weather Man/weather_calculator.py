@@ -1,53 +1,116 @@
-# weather_calculator.py
+"""
+weather_calculator.py
+
+This module defines the WeatherCalculator class, which performs calculations on weather data to generate yearly extremes,
+monthly averages, and daily temperatures.
+
+Classes:
+- WeatherCalculator: A class to calculate weather extremes, averages, and daily temperatures based on provided weather data.
+
+"""
 
 from datetime import datetime
-from weathercalculationsresults import WeatherCalculationResults
+from constants import weather_calculation_results
 
 
 class WeatherCalculator:
+    """
+    A class to perform calculations on weather data and generate reports.
+
+    Attributes:
+    - weather_data: Weather data containing temperature and humidity information.
+
+    Methods:
+    - calculate_yearly_extremes(year): Calculates yearly extremes (highest temperature, lowest temperature,
+                                        most humid day) for the specified year.
+    - calculate_monthly_averages(year, month): Calculates monthly averages (highest temperature, lowest temperature,
+                                                mean humidity) for the specified year and month.
+    - calculate_daily_temperatures(year, month): Retrieves daily temperatures for the specified year and month.
+    """
+
     def __init__(self, weather_data):
+        """
+        Initializes WeatherCalculator with weather data.
+
+        Args:
+        - weather_data (list): List of weather data objects containing temperature and humidity information.
+        """
         self.weather_data = weather_data
 
     def calculate_yearly_extremes(self, year):
+        """
+        Calculates yearly extremes (highest temperature, lowest temperature, most humid day) for the specified year.
+
+        Args:
+        - year (int): Year for which extremes are calculated.
+
+        Returns:
+        - WeatherCalculationResults: Object containing calculated extremes.
+        """
         year_data = self.weather_data
-        results = WeatherCalculationResults()
 
         if not year_data:
             print("No data found for the year")
-            return results
+            return weather_calculation_results
 
         highest_temp = max(year_data, key=lambda x: x.max_temperature)
         lowest_temp = min(year_data, key=lambda x: x.min_temperature)
         most_humid_day = max(year_data, key=lambda x: x.max_humidity)
 
-        results.highest_temperature = (highest_temp.max_temperature, highest_temp.date)
-        results.lowest_temperature = (lowest_temp.min_temperature, lowest_temp.date)
-        results.most_humid_day = (most_humid_day.max_humidity, most_humid_day.date)
+        weather_calculation_results["highest_temperature"] = (highest_temp.max_temperature, highest_temp.date)
+        weather_calculation_results["lowest_temperature"] = (lowest_temp.min_temperature, lowest_temp.date)
+        weather_calculation_results["most_humid_day"] = (most_humid_day.max_humidity, most_humid_day.date)
 
-        return results
+        return weather_calculation_results
 
     def calculate_monthly_averages(self, year, month):
+        """
+        Calculates monthly averages (highest temperature, lowest temperature, mean humidity) for the specified year
+        and month.
+
+        Args:
+        - year (int): Year for which averages are calculated.
+        - month (int): Month (1-12) for which averages are calculated.
+
+        Returns:
+        - WeatherCalculationResults: Object containing calculated averages.
+        """
+
         month_data = self.weather_data
-        results = WeatherCalculationResults()
 
         if not month_data:
-            print(f'No data found for the {year}-{month}')
-            return results
+            return weather_calculation_results
 
-        results.average_highest_temperature = sum(d.max_temperature for d in month_data) / len(month_data)
-        results.average_lowest_temperature = sum(d.min_temperature for d in month_data) / len(month_data)
-        results.average_mean_humidity = sum(d.mean_humidity for d in month_data) / len(month_data)
+        weather_calculation_results["average_highest_temperature"] = (
+                sum(day_data.max_temperature for day_data in month_data) / len(month_data)
+        )
+        weather_calculation_results["average_lowest_temperature"] = (
+                sum(day_data.min_temperature for day_data in month_data) / len(month_data)
+        )
+        weather_calculation_results["average_mean_humidity"] = (
+                sum(day_data.mean_humidity for day_data in month_data) / len(month_data)
+        )
 
-        return results
+        return weather_calculation_results
 
     def calculate_daily_temperatures(self, year, month):
+        """
+        Retrieves daily temperatures for the specified year and month.
+
+        Args:
+        - year (int): Year for which daily temperatures are retrieved.
+        - month (int): Month (1-12) for which daily temperatures are retrieved.
+
+        Returns:
+        - WeatherCalculationResults: Object containing daily temperatures.
+        """
         month_data = self.weather_data
-        results = WeatherCalculationResults()
 
         if not month_data:
-            print(f'No data found for the {year}-{month}')
-            return results
+            return weather_calculation_results
 
-        results.daily_temperatures = [(d.date, d.max_temperature, d.min_temperature) for d in month_data]
+        weather_calculation_results["daily_temperatures"] = [(day_data.date, day_data.max_temperature,
+                                                              day_data.min_temperature)
+                                                             for day_data in month_data]
 
-        return results
+        return weather_calculation_results
