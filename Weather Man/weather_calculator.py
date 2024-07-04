@@ -9,10 +9,11 @@ class WeatherCalculator:
         self.weather_data = weather_data
 
     def calculate_yearly_extremes(self, year):
-        year_data = [d for d in self.weather_data if d.date.year == year]
+        year_data = self.weather_data
         results = WeatherCalculationResults()
 
         if not year_data:
+            print("No data found for the year")
             return results
 
         highest_temp = max(year_data, key=lambda x: x.max_temperature)
@@ -26,11 +27,11 @@ class WeatherCalculator:
         return results
 
     def calculate_monthly_averages(self, year, month):
-        print(year, month)
-        month_data = [d for d in self.weather_data if d.date.year == year and d.date.month == month]
+        month_data = self.weather_data
         results = WeatherCalculationResults()
 
         if not month_data:
+            print(f'No data found for the {year}-{month}')
             return results
 
         results.average_highest_temperature = sum(d.max_temperature for d in month_data) / len(month_data)
@@ -40,10 +41,11 @@ class WeatherCalculator:
         return results
 
     def calculate_daily_temperatures(self, year, month):
-        month_data = [d for d in self.weather_data if d.date.year == year and d.date.month == month]
+        month_data = self.weather_data
         results = WeatherCalculationResults()
 
         if not month_data:
+            print(f'No data found for the {year}-{month}')
             return results
 
         results.daily_temperatures = [(d.date, d.max_temperature, d.min_temperature) for d in month_data]
