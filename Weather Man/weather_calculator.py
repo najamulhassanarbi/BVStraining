@@ -52,11 +52,16 @@ class WeatherCalculator:
         if not year_data:
             print("No data found for the year")
             return weather_calculation_results
-
-        highest_temp = max(year_data, key=lambda x: x.max_temperature)
-        lowest_temp = min(year_data, key=lambda x: x.min_temperature)
-        most_humid_day = max(year_data, key=lambda x: x.max_humidity)
-
+        highest_temp = None
+        lowest_temp = None
+        most_humid_day = None
+        for day in year_data:
+            if highest_temp is None or day.max_temperature > highest_temp.max_temperature:
+                highest_temp = day
+            if lowest_temp is None or day.min_temperature < lowest_temp.min_temperature:
+                lowest_temp = day
+            if most_humid_day is None or day.max_humidity > most_humid_day.max_humidity:
+                most_humid_day = day
         weather_calculation_results["highest_temperature"] = (highest_temp.max_temperature, highest_temp.date)
         weather_calculation_results["lowest_temperature"] = (lowest_temp.min_temperature, lowest_temp.date)
         weather_calculation_results["most_humid_day"] = (most_humid_day.max_humidity, most_humid_day.date)
@@ -109,8 +114,8 @@ class WeatherCalculator:
         if not month_data:
             return weather_calculation_results
 
-        weather_calculation_results["daily_temperatures"] = [(day_data.date, day_data.max_temperature,
-                                                              day_data.min_temperature)
-                                                             for day_data in month_data]
+        weather_calculation_results["daily_temperatures"] = [
+            (day_data.date, day_data.max_temperature, day_data.min_temperature)
+            for day_data in month_data]
 
         return weather_calculation_results

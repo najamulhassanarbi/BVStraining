@@ -22,8 +22,8 @@ class WeatherReport:
                 and average mean humidity.
 
     Methods:
-    - generate_extremes_report(): Generates a report for highest temperature, lowest temperature, and humidity extremes.
-    - generate_averages_report(): Generates a report for average highest temperature, average lowest temperature,
+    - generate_extreme_weather_yearly_report(): Generates a report for highest temperature, lowest temperature, and humidity extremes.
+    - generate_average_weather_yearly_report(): Generates a report for average highest temperature, average lowest temperature,
                                   and average mean humidity.
     - generate_daily_temperatures_report(year, month): Generates a daily temperatures report for a specific year and month.
     """
@@ -38,7 +38,7 @@ class WeatherReport:
 
         self.results = calculation_results
 
-    def generate_extremes_report(self):
+    def generate_extreme_weather_yearly_report(self):
         """
         Generates a report for highest temperature, lowest temperature, and humidity extremes.
         Returns:
@@ -61,7 +61,7 @@ class WeatherReport:
             output = "No data available for extremes for given input."
         return output
 
-    def generate_averages_report(self):
+    def generate_average_weather_yearly_report(self):
         """
         Generates a report for average highest temperature, average lowest temperature, and average mean humidity.
 

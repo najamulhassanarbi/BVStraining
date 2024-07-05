@@ -11,42 +11,7 @@ Classes:
 
 import os
 from constants import month_map
-from datetime import datetime
-from weather_data import WeatherData
-import pandas as pd
-
-
-def parse_file(file_path):
-    """
-    Parses a CSV file containing weather data and returns a WeatherData object.
-
-    Args:
-    - file_path (str): Path to the CSV file containing weather data.
-
-    Returns:
-    - Object: A WeatherData object containing parsed weather readings.
-    """
-    readings = []
-    data = pd.read_csv(file_path)
-    if 'PKST' in data.columns:
-        data.rename(columns={'PKST': 'PKT'}, inplace=True)
-    data = data[
-        ["PKT", "Max TemperatureC", "Mean TemperatureC", "Min TemperatureC", "Max Humidity", " Mean Humidity",
-         " Min Humidity"]]
-    data.rename(columns={"PKT": "date", " Mean Humidity": "Mean Humidity", " Min Humidity": "Min Humidity"},
-                inplace=True)
-    data.dropna(inplace=True)
-    for _, row in data.iterrows():
-        date = datetime.strptime(row["date"], "%Y-%m-%d")
-        max_temp = row["Max TemperatureC"]
-        mean_temp = row["Mean TemperatureC"]
-        min_temp = row["Min TemperatureC"]
-        max_humidity = row["Max Humidity"]
-        mean_humidity = row["Mean Humidity"]
-        min_humidity = row["Min Humidity"]
-        reading = WeatherData(date, max_temp, mean_temp, min_temp, max_humidity, mean_humidity, min_humidity)
-        readings.append(reading)
-    return readings
+from utils import parse_file
 
 
 class WeatherParser:

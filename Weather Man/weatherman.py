@@ -27,7 +27,7 @@ def main():
             weather_calculator = WeatherCalculator(weather_data)
             results = weather_calculator.calculate_yearly_extremes(year)
             report = WeatherReport(results)
-            output = report.generate_extremes_report()
+            output = report.generate_extreme_weather_yearly_report()
             print(output)
             option_index += 2
         elif option == '-a':
@@ -36,7 +36,7 @@ def main():
             weather_calculator = WeatherCalculator(weather_data)
             results = weather_calculator.calculate_monthly_averages(year, month)
             report = WeatherReport(results)
-            output = report.generate_averages_report()
+            output = report.generate_average_weather_yearly_report()
             print(output)
             option_index += 2
         elif option == '-c':

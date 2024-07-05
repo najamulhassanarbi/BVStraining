@@ -7,7 +7,10 @@ Constants:
 - weather_calculation_results (dict): A dictionary to store weather calculation results including highest temperature,
                                         lowest temperature, most humid day, average highest temperature, average lowest
                                         temperature, average mean humidity, and daily temperatures.
+- colors (dict): A dictionary mapping color names to ANSI escape sequences for colored output.
+- EXPECTED_NUMBER_OF_ARGS (int): The expected number of command line arguments for the weatherman script.
 """
+EXPECTED_NUMBER_OF_ARGS = 3
 
 month_map = {
     1: 'Jan',
