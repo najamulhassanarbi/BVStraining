@@ -23,6 +23,7 @@ month_map = {
     11: 'Nov',
     12: 'Dec'
 }
+
 colors = {
     "red": "\033[31m",
     "blue": "\033[34m",

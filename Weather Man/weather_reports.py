@@ -52,10 +52,11 @@ class WeatherReport:
             highest_temp, highest_day = self.results["highest_temperature"]
             lowest_temp, lowest_day = self.results["lowest_temperature"]
             humidity, humid_day = self.results["most_humid_day"]
-            output = (f"Highest: {highest_temp}C on {highest_day}\n"
-                      f"Lowest: {lowest_temp}C on {lowest_day}\n"
-                      f"Humidity: {humidity}% on {humid_day}"
-                      )
+            output = (
+                f"Highest: {round(highest_temp, 1)}C on {highest_day.strftime("%B")} {highest_day.strftime("%d")}\n"
+                f"Lowest: {round(lowest_temp, 1)}C on {lowest_day.strftime("%B")} {lowest_day.strftime("%d")}\n"
+                f"Humidity: {round(humidity, 1)}% on {humid_day.strftime("%B")} {humid_day.strftime("%d")}"
+                )
         else:
             output = "No data available for extremes for given input."
         return output
@@ -70,9 +71,9 @@ class WeatherReport:
                 and self.results["average_lowest_temperature"]
                 and self.results["average_mean_humidity"]):
 
-            output = (f"Average highest: {self.results['average_highest_temperature']}C\n"
-                      f"Average lowest: {self.results['average_lowest_temperature']}C\n"
-                      f"Average humidity: {self.results['average_mean_humidity']}%")
+            output = (f"Average highest: {round(self.results['average_highest_temperature'], 1)}C\n"
+                      f"Average lowest: {round(self.results['average_lowest_temperature'], 1)}C\n"
+                      f"Average humidity: {round(self.results['average_mean_humidity'], 1)}%")
         else:
             output = "No data available for averages for given input."
         return output

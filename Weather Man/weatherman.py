@@ -3,13 +3,15 @@ from weather_parser import WeatherParser
 from weather_calculator import WeatherCalculator
 from weather_reports import WeatherReport
 import sys
+from utils import validate_args
 import os
 import re
 
 
 def main():
     args = sys.argv[1:]
-    # validate_args(args)
+    validate_args(args)
+    print("validated")
 
     files_dir = args[0]
     options = args[1:]
@@ -24,7 +26,6 @@ def main():
             weather_data = parser.parse_files_year_wise(year)
             weather_calculator = WeatherCalculator(weather_data)
             results = weather_calculator.calculate_yearly_extremes(year)
-            print(results)
             report = WeatherReport(results)
             output = report.generate_extremes_report()
             print(output)
