@@ -9,7 +9,7 @@ Classes:
 """
 
 from datetime import datetime
-from utils import print_colored_stars
+from constants import colors
 
 
 class WeatherReport:
@@ -38,6 +38,22 @@ class WeatherReport:
 
         self.results = calculation_results
 
+    def __colored_stars(self, day, min_temp, max_temp):
+        """
+        Adds colored stars to the console.
+        Args:
+        - num_stars: Number of stars to print.
+        - color: Color of the stars.
+        Returns:
+        - String containing the colored stars.
+        """
+        blue_color = colors["blue"]
+        red_color = colors["red"]
+        min_temp_stars = f"{blue_color}{'*' * int(min_temp)}\033[0m"
+        max_temp_stars = f"{red_color}{'*' * int(max_temp)}\033[0m"
+        print(min_temp_stars)
+        return f"{day} {min_temp}C {min_temp_stars}{max_temp_stars} {max_temp}C"
+
     def generate_extreme_weather_yearly_report(self):
         """
         Generates a report for highest temperature, lowest temperature, and humidity extremes.
@@ -56,7 +72,7 @@ class WeatherReport:
                 f"Highest: {round(highest_temp, 1)}C on {highest_day.strftime("%B")} {highest_day.strftime("%d")}\n"
                 f"Lowest: {round(lowest_temp, 1)}C on {lowest_day.strftime("%B")} {lowest_day.strftime("%d")}\n"
                 f"Humidity: {round(humidity, 1)}% on {humid_day.strftime("%B")} {humid_day.strftime("%d")}"
-                )
+            )
         else:
             output = "No data available for extremes for given input."
         return output
@@ -86,12 +102,9 @@ class WeatherReport:
         - year (int): Year for which the report is generated.
         - month (int): Month (1-12) for which the report is generated.
         """
-
-        month_name = datetime(year, month, 1).strftime('%B')
         output = ""
         for date, max_temp, min_temp in self.results["daily_temperatures"]:
             day = date.strftime('%d')
-            blue_stars = print_colored_stars(min_temp, "blue")
-            red_stars = print_colored_stars(max_temp, "red")
-            output += f"{day} {min_temp}{blue_stars}{red_stars}{max_temp}\n"
+            daily_temp_stars = self.__colored_stars(day, min_temp, max_temp)
+            output += f"{daily_temp_stars}\n"
         return output

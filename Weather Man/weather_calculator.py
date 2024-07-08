@@ -9,9 +9,6 @@ Classes:
 
 """
 
-from datetime import datetime
-from constants import weather_calculation_results
-
 
 class WeatherCalculator:
     """
@@ -48,9 +45,13 @@ class WeatherCalculator:
         - WeatherCalculationResults: Object containing calculated extremes.
         """
         year_data = self.weather_data
+        weather_calculation_results = {
+            'highest_temperature': None,
+            'lowest_temperature': None,
+            'most_humid_day': None,
+        }
 
         if not year_data:
-            print("No data found for the year")
             return weather_calculation_results
         highest_temp = None
         lowest_temp = None
@@ -82,6 +83,11 @@ class WeatherCalculator:
         """
 
         month_data = self.weather_data
+        weather_calculation_results = {
+            'average_highest_temperature': None,
+            'average_lowest_temperature': None,
+            'average_mean_humidity': None,
+        }
 
         if not month_data:
             return weather_calculation_results
@@ -110,6 +116,9 @@ class WeatherCalculator:
         - WeatherCalculationResults: Object containing daily temperatures.
         """
         month_data = self.weather_data
+        weather_calculation_results = {
+            'daily_temperatures': []
+        }
 
         if not month_data:
             return weather_calculation_results

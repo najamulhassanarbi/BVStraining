@@ -3,18 +3,22 @@ from weather_parser import WeatherParser
 from weather_calculator import WeatherCalculator
 from weather_reports import WeatherReport
 import sys
-from utils import validate_args
+from input_parsing import InputParsing
 import os
 import re
 
 
 def main():
-    args = sys.argv[1:]
-    validate_args(args)
-    print("validated")
+    input_args = sys.argv[1:]
+    input_parser = InputParsing(input_args)
+    is_valid, message = input_parser.validate_args()
 
-    files_dir = args[0]
-    options = args[1:]
+    if not is_valid:
+        print(message)
+        sys.exit(1)
+
+    files_dir = input_args[0]
+    options = input_args[1:]
 
     parser = WeatherParser(files_dir)
 
