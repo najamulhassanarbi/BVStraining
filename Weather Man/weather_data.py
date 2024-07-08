@@ -32,13 +32,13 @@ class WeatherData:
         Initializes a WeatherData instance with the provided attributes.
 
         Args:
-        - date (datetime): The date of the weather data.
-        - max_temp (float): The maximum temperature recorded on this date.
-        - mean_temp (float): The mean temperature recorded on this date.
-        - min_temp (float): The minimum temperature recorded on this date.
-        - max_humidity (float): The maximum humidity recorded on this date.
-        - mean_humidity (float): The mean humidity recorded on this date.
-        - min_humidity (float): The minimum humidity recorded on this date.
+            date (datetime): The date of the weather data.
+            max_temp (float): The maximum temperature recorded on this date.
+            mean_temp (float): The mean temperature recorded on this date.
+            min_temp (float): The minimum temperature recorded on this date.
+            max_humidity (float): The maximum humidity recorded on this date.
+            mean_humidity (float): The mean humidity recorded on this date.
+            min_humidity (float): The minimum humidity recorded on this date.
         """
         self.date = date
         self.max_temperature = max_temp
@@ -53,7 +53,7 @@ class WeatherData:
         Returns a string representation of the weather data.
 
         Returns:
-        - str: A string representing the weather data.
+            str: A string representing the weather data.
         """
 
         return f'{self.date}, {self.max_temperature}, {self.mean_temperature}, {self.min_temperature}, {self.max_humidity}, {self.mean_humidity}, {self.min_humidity}'
