@@ -5,6 +5,12 @@ import sys
 
 class InputParsing:
     def __init__(self, input_args):
+        """
+        The constructor for InputParsing class.
+        Args:
+            input_args:
+        """
+
         self.input_args = input_args
 
     def validate_args(self):
@@ -12,7 +18,8 @@ class InputParsing:
         validate_args` function validates the command line arguments passed to the weatherman script.
         Args:
             self.input_args: List of command line arguments passed to the script.
-
+        Returns:
+            A tuple containing a boolean value indicating whether the arguments are valid and a message explaining the result.
         """
         message = ""
         if len(self.input_args) != EXPECTED_NUMBER_OF_ARGS:
