@@ -61,7 +61,7 @@ class WeatherCalculator:
                 lowest_temp = day
             if most_humid_day is None or day.max_humidity > most_humid_day.max_humidity:
                 most_humid_day = day
-                
+
         yearly_weather_extremes_calculation_results["highest_temperature"]["temperature"] = highest_temp.max_temperature
         yearly_weather_extremes_calculation_results["highest_temperature"]["date"] = highest_temp.date
         yearly_weather_extremes_calculation_results["lowest_temperature"]["temperature"] = lowest_temp.min_temperature
