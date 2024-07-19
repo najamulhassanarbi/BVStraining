@@ -20,4 +20,3 @@ class TimeModel(models.Model):
         :rtype:
         """
         return f'{self.time} {self.time_zone}'
-

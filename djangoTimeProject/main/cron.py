@@ -38,5 +38,3 @@ def change_time_zone():
         logger.error(f"Error occurred: {e}")
 
     logger.info("change_time_zone function ended.")
-
-

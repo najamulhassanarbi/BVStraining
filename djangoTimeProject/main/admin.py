@@ -7,4 +7,3 @@ from .models import TimeModel
 
 
 admin.site.register(TimeModel)
-

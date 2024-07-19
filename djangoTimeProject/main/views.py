@@ -21,4 +21,3 @@ def index(request):
     else:
         form = TimeModelForm()
     return render(request, 'main/index.html', {"form": form})
-
