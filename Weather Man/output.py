@@ -10,9 +10,7 @@ Classes:
 
 """
 
-import sys
-
-from constants import COMMANDS
+from constants import COMMANDS, MESSAGES
 from input_parsing import InputParsing
 from weather_parser import WeatherParser
 from weather_reports import WeatherReport
@@ -48,23 +46,21 @@ class OutputResults:
         generates reports based on specified commands, and prints them to standard output.
         """
         input_parser = InputParsing(self.input_args)
-        is_valid, message, input_args = input_parser.validate_args()
+        validation_result = input_parser.validate_args()
 
-        if not is_valid:
-            print(message)
-            sys.exit(1)
-
-        files_dir = input_args.get("files_dir")
+        if not validation_result.get("is_valid"):
+            return validation_result.get("message")
+        files_dir = validation_result["input_arguments"].get("files_dir")
         commands = self.input_args[2:]
+        input_args = validation_result["input_arguments"]
 
         option = 0
         while option < len(commands):
             input_args["command"] = commands[option]
             input_args["date"] = commands[option + 1]
-            command_is_valid, message = input_parser.validate_commands(input_args)
-            if not command_is_valid:
-                print(message)
-                sys.exit(0)
+            validation_result = input_parser.validate_commands(input_args)
+            if not validation_result.get("is_valid"):
+                return validation_result.get("message")
             command = input_args.get("command")
             date = input_args.get("date")
 
@@ -98,5 +94,5 @@ class OutputResults:
                 print(output)
                 option += 2
             else:
-                print("Invalid option:", command)
-                sys.exit(1)
+                message = MESSAGES.get("invalid_command")
+                return message

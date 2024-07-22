@@ -31,30 +31,42 @@ class InputParsing:
         Args:
             year: The year to be validated.
         Returns:
-            A tuple containing a boolean value indicating whether the year is valid, and a message explaining the result.
+            A dictionary containing a boolean value indicating whether the year is valid, and a message explaining the result.
         """
+        result = {
+            'is_valid': False,
+            'message': '',
+        }
         year_pattern = re.compile(r"^(199[6-9]|200[0-9]|2010|2011)$")
         if not year_pattern.match(year):
             message = MESSAGES.get("error_for_year")
-            return False, message
+            result['message'] = message
+            return result, message
+        result['is_valid'] = True
+        result['message'] = MESSAGES.get("valid")
+        return result
 
-        return True, MESSAGES.get("valid")
 
     def validate_date(self, date):
         """
         The function validates the date.
         Args:
-            command: The command to be executed.
             date: The date to be validated.
         Returns:
-            A tuple containing a boolean value indicating whether the date is valid, and a message explaining the result.
+            A dictionary containing a boolean value indicating whether the date is valid, and a message explaining the result.
         """
+        result = {
+            'is_valid': False,
+            'message': '',
+        }
         year_month_pattern = re.compile(r"^(199[6-9]|200[0-9]|2010|2011)/([1-9]|0[1-9]|1[0-2])$")
         if not year_month_pattern.match(date):
             message = MESSAGES.get("error_for_date")
-            return False, message
-
-        return True, MESSAGES.get("valid")
+            result['message'] = message
+            return result
+        result['is_valid'] = True
+        result['message'] = MESSAGES.get("valid")
+        return result
 
     def validate_file(self, input_arguments):
         """
@@ -65,12 +77,20 @@ class InputParsing:
         Returns:
             A tuple containing a boolean value indicating whether the date is valid, and a message explaining the result.
         """
+        result = {
+            'is_valid': False,
+            'message': '',
+        }
 
         files_dir = input_arguments.get("files_dir")
         if not os.path.isdir(files_dir):
             message = MESSAGES.get("file_error")
-            return False, message
-        return True, MESSAGES.get("valid")
+            result['message'] = message
+            return result
+
+        result['is_valid'] = True
+        result['message'] = MESSAGES.get("valid")
+        return result
 
     def validate_commands(self, input_arguments):
         """
@@ -78,27 +98,32 @@ class InputParsing:
         self.input_args:
             List of command line arguments passed to the script.
         Returns:
-            A tuple containing a boolean value indicating whether the arguments are valid, a message explaining the result, and dictionary of input
+            A dictionary containing a boolean value indicating whether the arguments are valid, a message explaining the result, and dictionary of input
         arguments.
         """
+        result = {
+            "is_valid": False,
+            "message": ""
+        }
 
         command = input_arguments.get("command")
         date = input_arguments.get("date")
         if command == '-e':
-            is_valid, message = self.validate_year(date)
-            if not is_valid:
-                return False, message
+
+            result = self.validate_year(date)
+            if not result.get("is_valid"):
+                return result
         elif command == '-a' or command == '-c':
-
-            is_valid, message = self.validate_date(date)
-            if not is_valid:
-                return False, message
-
+            result = self.validate_date(date)
+            if not result.get("is_valid"):
+                return result
         else:
-            message = MESSAGES.get("invalid")
-            return False, message
+            result["message"] = MESSAGES.get("invalid")
+            return result
 
-        return True, MESSAGES.get("valid")
+        result["message"] = MESSAGES.get("valid")
+        result['is_valid'] = True
+        return result
 
     def validate_args(self):
         """
@@ -106,10 +131,22 @@ class InputParsing:
         Args: elf.input_args:
             List of command line arguments passed to the script. Returns: A tuple containing a boolean value indicating
             whether the arguments are valid, a message explaining the result, and dictionary of input arguments.
-        """
+        Returns:
+            A dictionary containing:
+            - 'is_valid': A boolean value indicating whether the arguments are valid.
+            - 'message': A message explaining the result.
+            - 'input_arguments': A dictionary of input arguments.
+    """
+        result = {
+            'is_valid': False,
+            'message': '',
+            'input_arguments': defaultdict(str)
+        }
         if len(self.input_args) < EXPECTED_NUMBER_OF_ARGS:
             message = MESSAGES.get("usage")
-            return False, message, self.input_args
+            result['message'] = message
+            result['input_arguments'] = self.input_args
+            return result
 
         input_arguments = defaultdict(str)
         input_arguments["python_file"] = self.input_args[0]
@@ -117,13 +154,20 @@ class InputParsing:
         input_arguments["command"] = self.input_args[2]
         input_arguments["date"] = self.input_args[3]
 
-        file_is_valid, message = self.validate_file(input_arguments)
-        if not file_is_valid:
-            return False, message, input_arguments
+        validation_result = self.validate_file(input_arguments)
+        if not validation_result.get("is_valid"):
+            result['message'] = validation_result.get("message")
+            result['input_arguments'] = input_arguments
+            return result
 
-        command_date_valid, message = self.validate_commands(input_arguments)
+        validation_result = self.validate_commands(input_arguments)
 
-        if not command_date_valid:
-            return False, message, input_arguments
+        if not validation_result.get("is_valid"):
+            result['message'] = validation_result.get("message")
+            result['input_arguments'] = input_arguments
+            return result
 
-        return True, MESSAGES.get("valid"), input_arguments
+        result['is_valid'] = True
+        result['message'] = MESSAGES.get("valid")
+        result['input_arguments'] = input_arguments
+        return result

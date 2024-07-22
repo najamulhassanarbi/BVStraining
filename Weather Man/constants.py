@@ -25,7 +25,8 @@ MESSAGES = {
     "usage": "Usage: weatherman.py /path/to/files-dir -e 2002 or -a 2002/3 or -c 2002/12",
     "file_error": "Error:  is not a valid directory",
     "invalid": "Invalid option",
-    "valid": "validated"
+    "invalid_command": "Invalid command",
+    "valid": "validated",
 }
 
 MONTH_MAP = {

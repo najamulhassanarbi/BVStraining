@@ -64,7 +64,7 @@ class WeatherParser:
                          "Min Humidity"]
         data = data[required_cols]
         data.dropna(inplace=True)
-        for _, row in data.iterrows():
+        for index, row in data.iterrows():
             try:
                 date = datetime.strptime(row[f"{date_col}"], "%Y-%m-%d")
                 max_temp = float(row.get("Max TemperatureC", 0))
@@ -75,7 +75,8 @@ class WeatherParser:
                 min_humidity = float(row.get("Min Humidity", 0))
                 reading = WeatherData(date, max_temp, mean_temp, min_temp, max_humidity, mean_humidity, min_humidity)
                 readings.append(reading)
-            except ValueError:
+            except ValueError as e:
+                print(f"Error processing row {index}: {e}")
                 continue
         return readings
 

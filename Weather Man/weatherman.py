@@ -14,7 +14,9 @@ from output import OutputResults
 
 def main():
     output = OutputResults(sys.argv)
-    output.output()
+    message = output.output()
+    if message:
+        print(message)
 
 
 if __name__ == "__main__":
