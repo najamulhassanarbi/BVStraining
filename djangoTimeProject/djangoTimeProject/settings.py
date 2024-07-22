@@ -19,8 +19,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'main.apps.MainConfig',
-    'django_crontab'
+    "main.apps.MainConfig",
+    'django_crontab',
+    "django_extensions"
 ]
 
 MIDDLEWARE = [
@@ -93,7 +94,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CRONJOBS = [
-    ('* * * * *', 'main.cron.change_time_zone')
+    ('*/1 * * * *', 'main.cron.change_time_zone')
 ]
 
 LOGGING = {

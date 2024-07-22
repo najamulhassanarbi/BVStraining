@@ -12,7 +12,7 @@ class TimeModelFormView(FormView):
     """
     form_class = TimeModelForm
     template_name = 'main/index.html'
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('time-entry')
 
     def form_valid(self, form):
         """
