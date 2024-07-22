@@ -6,7 +6,7 @@
 
 from django.forms import ModelForm
 
-from .models import TimeModel
+from main.models import TimeModel
 
 
 class TimeModelForm(ModelForm):

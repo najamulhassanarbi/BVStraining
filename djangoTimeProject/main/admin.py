@@ -3,7 +3,7 @@
 """
 from django.contrib import admin
 
-from .models import TimeModel
+from main.models import TimeModel
 
 
 admin.site.register(TimeModel)

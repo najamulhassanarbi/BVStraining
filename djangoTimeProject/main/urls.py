@@ -2,8 +2,9 @@
     This module is used to define the url patterns for the main app.
 """
 from django.urls import path
-from . import views
+from main.views import TimeModelFormView
 
 urlpatterns = [
-    path('index/',views.index, name='index' ),
+    path('time-entry',TimeModelFormView.as_view(), name='time-entry' ),
 ]
+

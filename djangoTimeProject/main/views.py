@@ -2,22 +2,25 @@
     This module contains the main views of the main application.
 """
 
-from django.shortcuts import render
+from django.urls import reverse_lazy
+from django.views.generic.edit import FormView
+from main.forms import TimeModelForm
 
-from .forms import TimeModelForm
+class TimeModelFormView(FormView):
+    """
+    Class-based view to handle TimeModelForm submission.
+    """
+    form_class = TimeModelForm
+    template_name = 'main/index.html'
+    success_url = reverse_lazy('index')
 
-def index(request):
-    """
-    This is the main view of the main application.
-    :param request:
-    :type request:
-    :return:
-    :rtype:
-    """
-    if request.method == 'POST':
-        form = TimeModelForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-    else:
-        form = TimeModelForm()
-    return render(request, 'main/index.html', {"form": form})
+    def form_valid(self, form):
+        """
+        A function to check if the form is valid, save the form and redirect to the success URL.
+        args:
+        - form: The form to be validated
+        return:
+        - redirects to the success URL
+        """
+        form.save()
+        return super().form_valid(form)

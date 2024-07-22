@@ -55,10 +55,14 @@ TEMPLATES = [
 WSGI_APPLICATION = 'djangoTimeProject.wsgi.application'
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR,"timedatabase"),
-    }
+   'default': {
+       'ENGINE': 'django.db.backends.postgresql',
+       'NAME': "najam",
+       'USER': "postgres",
+       'PASSWORD': 'najam',
+       'HOST': "localhost",
+       'PORT': "5432",
+   }
 }
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -78,7 +82,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "Asia/Karachi"
 
 USE_I18N = True
 
@@ -89,7 +93,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CRONJOBS = [
-    ('*/1 * * * *', 'main.cron.change_time_zone')
+    ('* * * * *', 'main.cron.change_time_zone')
 ]
 
 LOGGING = {

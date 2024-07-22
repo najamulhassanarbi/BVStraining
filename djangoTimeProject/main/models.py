@@ -6,12 +6,14 @@
 
 from django.db import models
 
-from .constants import TIME_ZONES_CHOICES
+from main.constants import TIME_ZONES_CHOICES
 
 class TimeModel(models.Model):
     """A class for declaring the model for Time table"""
     time = models.TimeField()
     time_zone = models.CharField(choices=TIME_ZONES_CHOICES, default='EST', max_length=4)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         """

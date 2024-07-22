@@ -4,8 +4,10 @@
         - Changes the time zone for all entries in the TimeModel database.
 """
 import logging
+from datetime import timedelta
+from django.utils import timezone
 
-from .models import TimeModel
+from main.models import TimeModel
 
 logger = logging.getLogger('main')
 
@@ -18,10 +20,14 @@ def change_time_zone():
     :return:
     :rtype:
     """
-    logger.info("change_time_zone function started.")
+    # logger.info("change_time_zone function started.")
+
+    threshold_time = timezone.localtime(timezone.now()) - timedelta(minutes=10)
     try:
-        time_data = TimeModel.objects.all()
+        logger.info(f"minutes are {threshold_time}")
+        time_data = TimeModel.objects.filter(updated_at__lte=threshold_time)
         for time in time_data:
+            logger.info(f"time is {time}")
 
             current_time = time.time
 
