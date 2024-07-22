@@ -20,7 +20,6 @@ def change_time_zone():
     :return:
     :rtype:
     """
-    # logger.info("change_time_zone function started.")
 
     threshold_time = timezone.localtime(timezone.now()) - timedelta(minutes=10)
     try:
