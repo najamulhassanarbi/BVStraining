@@ -7,4 +7,3 @@ from main.views import TimeModelFormView
 urlpatterns = [
     path('time-entry',TimeModelFormView.as_view(), name='time-entry' ),
 ]
-

@@ -23,19 +23,17 @@ def change_time_zone():
 
     threshold_time = timezone.localtime(timezone.now()) - timedelta(minutes=10)
     try:
-        logger.info(f"minutes are {threshold_time}")
+
         time_data = TimeModel.objects.filter(updated_at__lte=threshold_time)
         for time in time_data:
-            logger.info(f"time is {time}")
-
             current_time = time.time
 
             if time.time_zone == "PKST":
                 time.time_zone = "EST"
-                time.time = current_time.replace(hour=(current_time.hour - 10) % 24)
+                time.time = current_time.replace(current_time - timedelta(hours=10))
             else:
                 time.time_zone = "PKST"
-                time.time = current_time.replace(hour=(current_time.hour + 10) % 24)
+                time.time = current_time.replace(current_time + timedelta(hours=10))
 
             time.save()
 
