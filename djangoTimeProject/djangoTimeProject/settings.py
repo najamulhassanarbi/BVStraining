@@ -4,11 +4,14 @@ Django settings for djangoTimeProject project.
 import os
 from pathlib import Path
 
+from dotenv import load_dotenv
+
+load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-hzg3_(pkx^hw^4$t!*v*u2za#!og9)s6445h$f(ueiz@k%a)bi'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
-DEBUG = True
+DEBUG = os.environ.get('DEBUG') == 'True'
 
 ALLOWED_HOSTS = []
 
@@ -58,11 +61,11 @@ WSGI_APPLICATION = 'djangoTimeProject.wsgi.application'
 DATABASES = {
    'default': {
        'ENGINE': 'django.db.backends.postgresql',
-       'NAME': "najam",
-       'USER': "postgres",
-       'PASSWORD': 'najam',
-       'HOST': "localhost",
-       'PORT': "5432",
+       'NAME': os.environ.get('DATABASE_NAME'),
+       'USER': os.environ.get('DATABASE_USER'),
+       'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
+       'HOST': os.environ.get('DATABASE_HOST'),
+       'PORT': os.environ.get('DATABASE_PORT'),
    }
 }
 
