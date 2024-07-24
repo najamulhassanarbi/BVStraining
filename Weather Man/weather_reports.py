@@ -59,7 +59,6 @@ class WeatherReport:
         Returns:
             String containing the report.
         """
-        output = ""
         highest_temperature = self.results.get("highest_temperature")
         lowest_temperature = self.results.get("lowest_temperature")
         most_humid_day = self.results.get("most_humid_day")
@@ -71,14 +70,14 @@ class WeatherReport:
             lowest_day = lowest_temperature.get("date")
             humidity = most_humid_day.get("humidity")
             humid_day = most_humid_day.get("date")
-            output = (
+            weather_report = (
                 f"Highest: {round(highest_temp, 1)}C on {highest_day.strftime("%B")} {highest_day.strftime("%d")}\n"
                 f"Lowest: {round(lowest_temp, 1)}C on {lowest_day.strftime("%B")} {lowest_day.strftime("%d")}\n"
                 f"Humidity: {round(humidity, 1)}% on {humid_day.strftime("%B")} {humid_day.strftime("%d")}"
             )
         else:
-            output = "No data available for extremes for given input."
-        return output
+            weather_report = "No data available for extremes for given input."
+        return weather_report
 
     def generate_average_weather_yearly_report(self):
         """
@@ -87,18 +86,17 @@ class WeatherReport:
             String containing the report.
 
         """
-        output = ""
         average_highest_temperature = self.results.get("average_highest_temperature")
         average_lowest_temperature = self.results.get("average_lowest_temperature")
         average_mean_humidity = self.results.get("average_mean_humidity")
         if average_highest_temperature and average_lowest_temperature and average_mean_humidity:
 
-            output = (f"Average highest: {round(average_highest_temperature, 1)}C\n"
+            weather_report = (f"Average highest: {round(average_highest_temperature, 1)}C\n"
                       f"Average lowest: {round(average_lowest_temperature, 1)}C\n"
                       f"Average humidity: {round(average_mean_humidity, 1)}%")
         else:
-            output = "No data available for averages for given input."
-        return output
+            weather_report = "No data available for averages for given input."
+        return weather_report
 
     def generate_daily_temperatures_report(self, year, month):
         """
@@ -109,7 +107,7 @@ class WeatherReport:
         Returns:
             String containing the report.
         """
-        output = ""
+        weather_report = ""
         if not self.results:
             return "No data available for daily temperatures for given month."
 
@@ -119,5 +117,5 @@ class WeatherReport:
             min_temp = daily_temps.get('min_temperature')
             max_temp = daily_temps.get('max_temperature')
             daily_temp_stars = self.__colored_stars(day, min_temp, max_temp)
-            output += f"{daily_temp_stars}\n"
-        return output
+            weather_report += f"{daily_temp_stars}\n"
+        return weather_report

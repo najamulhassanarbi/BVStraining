@@ -48,9 +48,9 @@ class WeatherParser:
             file_path (str): Path to the CSV file containing weather data.
 
         Returns:
-            Object: A WeatherData object containing parsed weather readings.
+            Object: A WeatherData object containing parsed weather weather_reading.
         """
-        readings = []
+        weather_reading = []
         data = pd.read_csv(file_path)
         data.columns = data.columns.str.strip()
         date_col = None
@@ -74,11 +74,11 @@ class WeatherParser:
                 mean_humidity = float(row.get("Mean Humidity", 0))
                 min_humidity = float(row.get("Min Humidity", 0))
                 reading = WeatherData(date, max_temp, mean_temp, min_temp, max_humidity, mean_humidity, min_humidity)
-                readings.append(reading)
+                weather_reading.append(reading)
             except ValueError as e:
                 print(f"Error processing row {index}: {e}")
                 continue
-        return readings
+        return weather_reading
 
     def parse_files_year_wise(self, year):
         """
@@ -90,13 +90,13 @@ class WeatherParser:
         Returns:
             list: List of WeatherData objects containing parsed weather readings for the year.
         """
-        all_readings = []
+        yearly_weather_readings = []
         for filename in os.listdir(self.files_dir):
             if filename.startswith(f'lahore_weather_{year}'):
                 file_path = os.path.join(self.files_dir, filename)
                 readings = self.parse_file(file_path)
-                all_readings.extend(readings)
-        return all_readings
+                yearly_weather_readings.extend(readings)
+        return yearly_weather_readings
 
     def parse_files_month_wise(self, year, month):
         """
@@ -109,11 +109,11 @@ class WeatherParser:
         Returns:
             list: List of WeatherData objects containing parsed weather readings for the month.
         """
-        all_readings = []
+        monthly_weather_readings = []
         month = MONTH_MAP[month]
         for filename in os.listdir(self.files_dir):
             if filename.startswith(f'lahore_weather_{year}_{month}'):
                 file_path = os.path.join(self.files_dir, filename)
                 readings = self.parse_file(file_path)
-                all_readings.extend(readings)
-        return all_readings
+                monthly_weather_readings.extend(readings)
+        return monthly_weather_readings
