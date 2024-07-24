@@ -9,6 +9,24 @@ from snippets.serializers import SnippetSerializer, UserSerializer
 from rest_framework import mixins, generics
 from rest_framework import permissions
 from snippets.permissions import IsOwnerOrReadOnly
+from rest_framework.reverse import reverse
+from rest_framework import renderers
+
+
+@api_view(['GET'])
+def api_root(request, format=None):
+    return Response({
+        "users": reverse('user-list', request=request, format=format),
+        "snippets": reverse('snippet-list', request=request, format=format),
+    })
+
+class SnippetHighlight(generics.GenericAPIView):
+    queryset = Snippet.objects.all()
+    renderer_classes = [renderers.StaticHTMLRenderer]
+
+    def get(self, request, *args, **kwargs):
+        snippet = self.get_object()
+        return Response(snippet.highlighted)
 
 
 # @api_view(['GET', 'POST'])
