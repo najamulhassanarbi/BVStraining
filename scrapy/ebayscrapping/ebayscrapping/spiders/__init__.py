@@ -122,7 +122,7 @@ class ComputerZoneScrapper(scrapy.Spider):
             Parses the product list from the category page and handles pagination.
 
         parse_product_detail(self, response):
-            Extracts detailed information about each product from the product page.
+            Extracts detailed information about each product from the product page of each category.
     """
     name = 'computer_zone_scrapper'
     allowed_domains = ['czone.com.pk']
