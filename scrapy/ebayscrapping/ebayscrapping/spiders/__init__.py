@@ -61,6 +61,8 @@ class EbayScrapper(scrapy.Spider):
         for url in self.start_urls:
             yield scrapy.Request(url, self.parse)
 
+
+
     def parse(self, response):
         """
         Parses the product list from the response and follows product URLs.
@@ -74,6 +76,7 @@ class EbayScrapper(scrapy.Spider):
         products = response.css('li.s-item')
         for product in products:
             product_url = product.css('a::attr(href)').get()
+            category = self.extract_category(product_url)
             if product_url:
                 yield scrapy.Request(product_url, callback=self.parse_product_details)
 
@@ -127,6 +130,20 @@ class ComputerZoneScrapper(scrapy.Spider):
     name = 'computer_zone_scrapper'
     allowed_domains = ['czone.com.pk']
     start_urls = ['https://www.czone.com.pk/']
+    def extract_category(self, url):
+        """
+        extracts the category from the URL.
+        :param url:
+        :type url:
+        :return:
+        :rtype:
+        """
+        parsed_url = urlparse(url)
+        path_segments = parsed_url.path.split('/')
+        for segment in path_segments:
+            if segment:
+                return segment.split('-')[0]
+        return None
 
     def parse(self, response):
         """
@@ -143,14 +160,14 @@ class ComputerZoneScrapper(scrapy.Spider):
             product_url = product.css('.image a::attr(href)').get()
             if product_url:
                 full_product_url = response.urljoin(product_url)
-                yield scrapy.Request(full_product_url, callback=self.parse_product_detail)
+                category = self.extract_category(full_product_url)
+                yield scrapy.Request(full_product_url, callback=self.parse_product_detail, meta={"category": category})
 
         categories = response.css('.navbar-nav ul li a::attr(href)').getall()
-        print(categories)
 
         for category_url in categories:
             full_category_url = response.urljoin(category_url)
-            yield scrapy.Request(full_category_url, callback=self.parse_category)
+            yield scrapy.Request(full_category_url, callback=self.parse_category, meta={"category": category_url})
 
     def parse_category(self, response):
         """
@@ -163,16 +180,17 @@ class ComputerZoneScrapper(scrapy.Spider):
             scrapy.Request: Request objects for each product page and the next page if available.
         """
         products = response.css('.product')
+        category = response.meta["category"]
         for product in products:
             product_url = product.css('.image a::attr(href)').get()
             if product_url:
                 full_product_url = response.urljoin(product_url)
-                yield scrapy.Request(full_product_url, callback=self.parse_product_detail)
+                yield scrapy.Request(full_product_url, callback=self.parse_product_detail, meta={"category": category})
 
         next_page_url = response.css('.pagination .NextPage::attr(href)').get()
         if next_page_url:
             full_next_page_url = response.urljoin(next_page_url)
-            yield scrapy.Request(full_next_page_url, callback=self.parse_category)
+            yield scrapy.Request(full_next_page_url, callback=self.parse_category, meta={"category": category})
 
     def parse_product_detail(self, response):
         """
@@ -190,6 +208,7 @@ class ComputerZoneScrapper(scrapy.Spider):
         details = response.css(".details-description ul li::text").getall()
         price = response.css('.price-sales::text').get()
         image_url = response.css('img::attr(src)').getall()[1]
+        category = response.meta["category"]
 
         if image_url and image_url.startswith('/'):
             image_url = response.urljoin(image_url)
@@ -201,5 +220,6 @@ class ComputerZoneScrapper(scrapy.Spider):
             'price': price,
             'image_url': image_url,
             'details': details,
+            'category': category
         }
         yield product_data
