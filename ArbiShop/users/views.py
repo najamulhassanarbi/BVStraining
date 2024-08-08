@@ -9,17 +9,57 @@ Classes:
     HomeView: Displays the home page to logged-in users.
     LogoutView: Handles user logout.
 """
-
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import PasswordResetView
+from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
+from django.urls import reverse_lazy
 from django.views import View
 from django.contrib.auth import get_user_model
 from django.http import HttpResponse
-from users.forms import CustomUserCreationForm, LoginForm
+from django.contrib import messages
+from django.views.generic import CreateView, UpdateView
+
+from users.forms import CustomUserCreationForm, LoginForm, UserUpdateForm
 from users.utils import create_jwt_token
 
 User = get_user_model()
+
+
+
+
+class ProfileUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    Handles user profile updates.
+    """
+    model = User
+    form_class = UserUpdateForm
+    template_name = 'users/update_profile.html'
+    success_url = reverse_lazy('users:profile')  # Use the appropriate URL name
+
+    def get_object(self):
+        """
+        Return the current user object.
+
+        :return: User object
+        :rtype: User
+        """
+        return self.request.user
+
+    def form_valid(self, form):
+        """
+        Process the profile update form and save the user.
+
+        :param form: Validated form
+        :type form: UserUpdateForm
+        :return: Redirects to profile page or re-renders profile page with success message
+        :rtype: HttpResponse
+        """
+        messages.success(self.request, 'Profile updated successfully')
+        return super().form_valid(form)
+
 
 class SignUpView(View):
     """
@@ -38,7 +78,7 @@ class SignUpView(View):
         :rtype: HttpResponse
         """
         form = CustomUserCreationForm()
-        return render(request, 'signup.html', {'form': form})
+        return render(request, 'users/signup.html', {'form': form})
 
     def post(self, request):
         """
@@ -58,7 +98,7 @@ class SignUpView(View):
             response = redirect('home')
             response.set_cookie('jwt', token)
             return response
-        return render(request, 'signup.html', {'form': form})
+        return render(request, 'users/signup.html', {'form': form})
 
 
 class LoginView(View):
@@ -78,7 +118,7 @@ class LoginView(View):
         :rtype: HttpResponse
         """
         form = LoginForm()
-        return render(request, 'login.html', {'form': form})
+        return render(request, 'users/login.html', {'form': form})
 
     def post(self, request):
         """
@@ -95,27 +135,25 @@ class LoginView(View):
             password = form.cleaned_data['password']
             try:
                 user = User.objects.get(email=email)
-                print(user)
                 user = authenticate(request, username=user, password=password)
                 if user:
                     token = create_jwt_token(user)
                     response = redirect('home')
                     response.set_cookie('jwt', token)
+                    username = form.cleaned_data.get('username')
+                    messages.success(request, f'Account created for {username}')
                     return response
                 else:
                     return HttpResponse('Invalid credentials', status=401)
             except User.DoesNotExist:
                 return HttpResponse('Invalid credentials', status=401)
-        return render(request, 'login.html', {'form': form})
+        return render(request, 'users/login.html', {'form': form})
 
 
-class HomeView(LoginRequiredMixin, View):
+class HomeView(View):
     """
     Displays the home page to logged-in users.
     """
-
-    login_url = '/login/'
-    redirect_field_name = 'redirect_to'
 
     def get(self, request):
         """
@@ -126,7 +164,7 @@ class HomeView(LoginRequiredMixin, View):
         :return: Rendered home page
         :rtype: HttpResponse
         """
-        return render(request, 'home.html')
+        return render(request, 'users/home.html')
 
 
 class LogoutView(View):
@@ -148,3 +186,17 @@ class LogoutView(View):
         response.delete_cookie('jwt')
         logout(request)
         return response
+
+
+class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
+    template_name = 'users/password_reset.html'
+    email_template_name = 'users/password_reset_email.html'
+    subject_template_name = 'users/password_reset_subject.txt'
+    success_message = "We've emailed you instructions for setting your password, " \
+                      "if an account exists with the email you entered. You should receive them shortly." \
+                      " If you don't receive an email, " \
+                      "please make sure you've entered the address you registered with, and check your spam folder."
+    success_url = reverse_lazy('home')
+
+
+
