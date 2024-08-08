@@ -1,10 +1,6 @@
-"""
-WSGI config for ArbiShop project.
-
-It exposes the WSGI callable as a module-level variable named ``application``.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/5.0/howto/deployment/wsgi/
+"""file:wsgi.py
+    This module provides WSGI application for DjangoTimeProject.
+    WSGI config for ArbiShop project.
 """
 
 import os
