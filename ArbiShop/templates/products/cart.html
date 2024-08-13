@@ -1,10 +1,108 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'users/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Your Cart</h1>
+    <div id="cart-items" class="row">
+        <!-- Cart items will be dynamically inserted here -->
+    </div>
+    <div id="cart-summary" class="text-right mt-4">
+        <h3>Total: <span id="cart-total"></span></h3>
+        <a href="{% url 'products:checkout' %}" class="btn btn-primary">Proceed to Checkout</a>
+    </div>
+</div>
+
+<script>
+    class Cart {
+    constructor() {
+        this.cart = this.loadCart();
+        this.updateCartCount();
+        this.renderCartItems();
+    }
+
+    loadCart() {
+        return localStorage.getItem('cart') ? JSON.parse(localStorage.getItem('cart')) : {};
+    }
+
+    saveCart() {
+        localStorage.setItem('cart', JSON.stringify(this.cart));
+    }
+
+    updateCartCount() {
+        let totalItems = Object.values(this.cart).reduce((total, item) => total + item.quantity, 0);
+        document.getElementById('cart-count').textContent = totalItems;
+    }
+
+    renderCartItems() {
+        let cartItemsContainer = document.getElementById('cart-items');
+        let cartTotal = 0;
+        cartItemsContainer.innerHTML = '';
+
+        if (Object.keys(this.cart).length === 0) {
+            cartItemsContainer.innerHTML = `<p class="alert alert-info">Your cart is empty.</p>`;
+            document.getElementById('cart-summary').style.display = 'none';
+        } else {
+            document.getElementById('cart-summary').style.display = 'block';
+        }
+
+        for (let productId in this.cart) {
+            let product = this.cart[productId];
+            cartTotal += product.price * product.quantity;
+
+            let item = document.createElement('div');
+            item.classList.add('col-md-4');
+            
+            item.innerHTML = `
+                <div class="card mb-4 shadow-sm">
+                    <img src="${product.image}" class="card-img-top" alt="${product.name}">
+                    <div class="card-body">
+                        <h5 class="card-title">${product.name}</h5>
+                        <p class="card-text"><strong>Price:</strong> ${product.price}</p>
+                        <p class="card-text"><strong>Quantity:</strong> ${product.quantity}</p>
+                        <button class="btn btn-danger remove-item" data-id="${product.id}">Remove</button>
+                    </div>
+                </div>
+            `;
+            cartItemsContainer.appendChild(item);
+        }
+
+        document.getElementById('cart-total').textContent = cartTotal.toFixed(2);
+        this.updateCheckoutButtonState();
+
+        // Attach event listeners to the remove buttons
+        this.initRemoveItemListeners();
+    }
+
+    initRemoveItemListeners() {
+        const removeButtons = document.querySelectorAll('.remove-item');
+        removeButtons.forEach(button => {
+            button.addEventListener('click', (event) => {
+                const productId = event.target.getAttribute('data-id');
+                this.removeItemFromCart(productId);
+            });
+        });
+    }
+
+    removeItemFromCart(productId) {
+        delete this.cart[productId];
+        this.saveCart();
+        this.renderCartItems();
+        this.updateCartCount();
+    }
+
+    updateCheckoutButtonState() {
+        const checkoutButton = document.querySelector('.btn-primary');
+        if (Object.keys(this.cart).length === 0) {
+            checkoutButton.disabled = true;
+        } else {
+            checkoutButton.disabled = false;
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const cart = new Cart();
+});
+
+</script>
+{% endblock %}

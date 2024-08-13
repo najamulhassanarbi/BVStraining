@@ -1,3 +1,12 @@
+"""
+File: admin.py
+
+Description:
+    This module customizes the Django admin interface for managing users. It defines
+    a custom user admin interface that uses the CustomUser model, providing additional
+    fields and filtering options tailored to the application's specific needs.
+"""
+
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .forms import CustomUserCreationForm, CustomUserChangeForm
@@ -6,7 +15,8 @@ from .models import CustomUser
 
 class CustomUserAdmin(UserAdmin):
     """
-    This class defines the custom user admin widget.
+    Customizes the Django admin interface for the CustomUser model, allowing
+    administrators to manage user details, roles, and permissions effectively.
     """
     add_form = CustomUserCreationForm
     form = CustomUserChangeForm

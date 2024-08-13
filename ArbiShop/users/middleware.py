@@ -1,7 +1,9 @@
+"""users/middleware.py
+This file is for custom middleware for handling authentication
+"""
 from django.utils.deprecation import MiddlewareMixin
 from django.contrib.auth import get_user_model
-from django.contrib.auth import authenticate
-from .utils import decode_jwt_token
+from users.utils import decode_jwt_token
 
 User = get_user_model()
 

@@ -1,3 +1,7 @@
+"""users/managers.py
+This file is for handing the users managers.
+"""
+
 from django.contrib.auth.base_user import BaseUserManager
 from django.utils.translation import gettext_lazy as _
 

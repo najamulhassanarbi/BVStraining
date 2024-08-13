@@ -28,8 +28,6 @@ from users.utils import create_jwt_token
 User = get_user_model()
 
 
-
-
 class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     """
     Handles user profile updates.
@@ -37,7 +35,7 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     model = User
     form_class = UserUpdateForm
     template_name = 'users/update_profile.html'
-    success_url = reverse_lazy('users:profile')  # Use the appropriate URL name
+    success_url = reverse_lazy('users:update_profile')
 
     def get_object(self):
         """
@@ -95,7 +93,7 @@ class SignUpView(View):
             user.set_password(form.cleaned_data['password1'])
             user.save()
             token = create_jwt_token(user)
-            response = redirect('home')
+            response = redirect('products:product-list')
             response.set_cookie('jwt', token)
             return response
         return render(request, 'users/signup.html', {'form': form})
@@ -118,7 +116,8 @@ class LoginView(View):
         :rtype: HttpResponse
         """
         form = LoginForm()
-        return render(request, 'users/login.html', {'form': form})
+        next_url = request.GET.get('next', '')
+        return render(request, 'users/login.html', {'form': form, 'next': next_url})
 
     def post(self, request):
         """
@@ -126,7 +125,7 @@ class LoginView(View):
 
         :param request: HTTP POST request
         :type request: HttpRequest
-        :return: Redirects to home page or re-renders login form with errors
+        :return: Redirects to next URL or home page, or re-renders login form with errors
         :rtype: HttpResponse
         """
         form = LoginForm(request.POST)
@@ -137,34 +136,19 @@ class LoginView(View):
                 user = User.objects.get(email=email)
                 user = authenticate(request, username=user, password=password)
                 if user:
+                    login(request, user)  # Log the user in
                     token = create_jwt_token(user)
-                    response = redirect('home')
+                    next_url = request.POST.get('next', 'products:product-list')
+                    response = redirect(next_url)
                     response.set_cookie('jwt', token)
-                    username = form.cleaned_data.get('username')
-                    messages.success(request, f'Account created for {username}')
+                    messages.success(request, 'Login Successful')
                     return response
                 else:
                     return HttpResponse('Invalid credentials', status=401)
             except User.DoesNotExist:
                 return HttpResponse('Invalid credentials', status=401)
-        return render(request, 'users/login.html', {'form': form})
-
-
-class HomeView(View):
-    """
-    Displays the home page to logged-in users.
-    """
-
-    def get(self, request):
-        """
-        Render the home page for logged-in users.
-
-        :param request: HTTP GET request
-        :type request: HttpRequest
-        :return: Rendered home page
-        :rtype: HttpResponse
-        """
-        return render(request, 'users/home.html')
+        next_url = request.POST.get('next', '')
+        return render(request, 'users/login.html', {'form': form, 'next': next_url})
 
 
 class LogoutView(View):
@@ -182,7 +166,7 @@ class LogoutView(View):
         :return: Redirects to login page
         :rtype: HttpResponse
         """
-        response = redirect('login')
+        response = redirect('products:product-list')
         response.delete_cookie('jwt')
         logout(request)
         return response
@@ -193,10 +177,7 @@ class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
     email_template_name = 'users/password_reset_email.html'
     subject_template_name = 'users/password_reset_subject.txt'
     success_message = "We've emailed you instructions for setting your password, " \
-                      "if an account exists with the email you entered. You should receive them shortly." \
-                      " If you don't receive an email, " \
-                      "please make sure you've entered the address you registered with, and check your spam folder."
-    success_url = reverse_lazy('home')
-
-
-
+        "if an account exists with the email you entered. You should receive them shortly." \
+        " If you don't receive an email, " \
+        "please make sure you've entered the address you registered with, and check your spam folder."
+    success_url = reverse_lazy('products:product-list')

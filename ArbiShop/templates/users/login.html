@@ -5,8 +5,11 @@
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
+      {% if next %}
+        <input type="hidden" name="next" value="{{ next }}">
+    {% endif %}
     <button type="submit" class="btn btn-primary">Login</button>
-      <p>Don't have an account? <a href="{% url 'signup' %}">Sign up here</a></p>
-      <a href="{% url 'password_reset' %}">Forgot Password?</a>  
+      <p>Don't have an account? <a href="{% url 'users:signup' %}">Sign up here</a></p>
+      <a href="{% url 'users:password_reset' %}">Forgot Password?</a>  
   </form>
 {% endblock %}
