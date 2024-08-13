@@ -1,8 +1,10 @@
-""" File: users/apps.py
-This module defines the configuration for the 'users' Django application.
+"""
+File: users/apps.py
 
-The MainConfig class specifies settings such as the default auto field type for models
-and the name of the application.
+Description:
+    This module defines the configuration for the 'users' Django application.
+    The UsersConfig class specifies settings such as the default auto field type for models
+    and the name of the application.
 """
 
 from django.apps import AppConfig

@@ -1,6 +1,10 @@
-import jwt
+"""users/utils.py
+Utility functions for dealing with user data.
+"""
 from datetime import datetime, timedelta
 from django.conf import settings
+
+import jwt
 
 
 def create_jwt_token(user):
