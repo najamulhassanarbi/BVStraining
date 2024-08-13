@@ -1,3 +1,7 @@
+"""user/forms.py
+This file is for declaring Form for User models
+"""
+
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
@@ -9,7 +13,6 @@ class CustomUserCreationForm(UserCreationForm):
     """
     A class that inherits from UserCreationForm. responsible for creating user form
     """
-    # fields we want to include and customize in our form
     first_name = forms.CharField(max_length=100,
                                  required=True,
                                  widget=forms.TextInput(attrs={'placeholder': 'First Name',
@@ -42,15 +45,6 @@ class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'email', 'password1', 'password2']
-
-    # class Meta:
-    #     model = User
-    #     fields = ("email",)
-    #     widgets = {
-    #         'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter email'}),
-    #         'password1': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Enter password'}),
-    #         'password2': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Confirm password'}),
-    #     }
 
 
 class CustomUserChangeForm(UserChangeForm):
@@ -89,6 +83,7 @@ class UserUpdateForm(forms.ModelForm):
     """
     Form for users to update their profile information.
     """
+
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'email', 'avatar', 'bio']
