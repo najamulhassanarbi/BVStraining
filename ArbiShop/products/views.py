@@ -14,6 +14,7 @@ from django.urls import reverse_lazy
 
 from products.models import Product
 from products.filters import ProductFilter
+from orders.models import Order, OrderItem
 
 
 class CartView(TemplateView):
@@ -24,13 +25,6 @@ class CartView(TemplateView):
     template_name = 'products/cart.html'
 
 
-class CheckoutView(LoginRequiredMixin, TemplateView):
-    """
-    Handles the checkout process, ensuring the user is logged in before
-    allowing them to proceed with purchasing the items in their cart.
-    """
-    template_name = 'products/checkout.html'
-    success_url = reverse_lazy('products:checkout')
 
 
 class ProductListView(ListView):

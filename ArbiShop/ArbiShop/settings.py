@@ -5,10 +5,10 @@ Django settings for ArbiShop project.
 import os
 from pathlib import Path
 
+import stripe
 from dotenv import load_dotenv
 
 load_dotenv()
-
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY')
@@ -21,11 +21,17 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = str(os.environ.get('EMAIL_USER'))
 EMAIL_HOST_PASSWORD = str(os.environ.get('EMAIL_PASSWORD'))
 
+STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY')
+STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
+
+stripe.api_key = STRIPE_SECRET_KEY
+
 ALLOWED_HOSTS = []
 
 AUTH_USER_MODEL = "users.CustomUser"
 
 INSTALLED_APPS = [
+    "jazzmin",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -34,7 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "users",
     "products",
-    "widget_tweaks"
+    "widget_tweaks",
+    "orders",
+    "django_countries",
+
 
 ]
 
@@ -75,16 +84,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ArbiShop.wsgi.application'
 
-
 DATABASES = {
-   'default': {
-       'ENGINE': 'django.db.backends.postgresql',
-       'NAME': os.environ.get('DATABASE_NAME'),
-       'USER': os.environ.get('DATABASE_USER'),
-       'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
-       'HOST': os.environ.get('DATABASE_HOST'),
-       'PORT': os.environ.get('DATABASE_PORT'),
-   }
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('DATABASE_NAME'),
+        'USER': os.environ.get('DATABASE_USER'),
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
+        'HOST': os.environ.get('DATABASE_HOST'),
+        'PORT': os.environ.get('DATABASE_PORT'),
+    }
 }
 
 AUTH_PASSWORD_VALIDATORS = [

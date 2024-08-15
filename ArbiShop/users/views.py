@@ -93,7 +93,7 @@ class SignUpView(View):
             user.set_password(form.cleaned_data['password1'])
             user.save()
             token = create_jwt_token(user)
-            response = redirect('products:product-list')
+            response = redirect('product-list')
             response.set_cookie('jwt', token)
             return response
         return render(request, 'users/signup.html', {'form': form})
@@ -138,7 +138,7 @@ class LoginView(View):
                 if user:
                     login(request, user)  # Log the user in
                     token = create_jwt_token(user)
-                    next_url = request.POST.get('next', 'products:product-list')
+                    next_url = request.POST.get('next', 'product-list')
                     response = redirect(next_url)
                     response.set_cookie('jwt', token)
                     messages.success(request, 'Login Successful')
@@ -166,7 +166,7 @@ class LogoutView(View):
         :return: Redirects to login page
         :rtype: HttpResponse
         """
-        response = redirect('products:product-list')
+        response = redirect('product-list')
         response.delete_cookie('jwt')
         logout(request)
         return response
@@ -180,4 +180,4 @@ class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
         "if an account exists with the email you entered. You should receive them shortly." \
         " If you don't receive an email, " \
         "please make sure you've entered the address you registered with, and check your spam folder."
-    success_url = reverse_lazy('products:product-list')
+    success_url = reverse_lazy('product-list')
