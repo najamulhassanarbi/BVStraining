@@ -7,14 +7,12 @@ Description:
     The views are implemented using Django's generic class-based views, with some requiring
     user authentication for access.
 """
-
+from django.shortcuts import get_object_or_404
 from django.views.generic import ListView, DetailView, TemplateView
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse_lazy
+from django_filters.views import FilterView
 
-from products.models import Product
+from products.models import Product, Category
 from products.filters import ProductFilter
-from orders.models import Order, OrderItem
 
 
 class CartView(TemplateView):
@@ -23,8 +21,6 @@ class CartView(TemplateView):
     they have added to their cart.
     """
     template_name = 'products/cart.html'
-
-
 
 
 class ProductListView(ListView):
@@ -43,7 +39,10 @@ class ProductListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['filterset'] = self.filterset
+        # Assuming you have a Category model
+        context['featured_categories'] = Category.objects.filter(featured=True)
+        context["categories"] = Category.objects.all()
+
         return context
 
 
@@ -55,3 +54,37 @@ class ProductDetailView(DetailView):
     model = Product
     template_name = 'products/product_detail.html'
     context_object_name = 'product'
+
+
+class CategoryProductsView(FilterView, ListView):
+    """
+    Shows a paginated and filtered list of products in a category.
+
+    Combines FilterView and ListView to display products in a specific category with filtering.
+    Also provides additional context for the current category and all available categories.
+    """
+
+    model = Product
+    template_name = 'products/category_product_listing.html'
+    context_object_name = 'products'
+    paginate_by = 12
+    filterset_class = ProductFilter
+
+    def get_queryset(self):
+        """
+        Filters products by the selected category and applies the filter set.
+        """
+        self.category = get_object_or_404(Category, id=self.kwargs['category_id'])
+        queryset = super().get_queryset().filter(category=self.category)
+        self.filterset = self.filterset_class(self.request.GET, queryset=queryset)
+        return self.filterset.qs
+
+    def get_context_data(self, **kwargs):
+        """
+        Adds the current category, filter set, and all categories to the context.
+        """
+        context = super().get_context_data(**kwargs)
+        context['category'] = self.category
+        context['filterset'] = self.filterset
+        context["categories"] = Category.objects.all()
+        return context

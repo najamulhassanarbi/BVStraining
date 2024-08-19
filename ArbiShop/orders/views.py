@@ -9,7 +9,7 @@ processing with Stripe, and order creation.
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, DetailView
 from orders.forms import CheckoutForm
 from django.views import View
 from django.shortcuts import render, redirect
@@ -21,6 +21,7 @@ import stripe
 
 from orders.models import OrderItem
 from products.models import Product
+from orders.models import Order
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -141,4 +142,42 @@ class PaymentView(LoginRequiredMixin, View):
 
         messages.warning(self.request, "Invalid data received")
         return redirect("orders:process_payment")
+
+
+class OrderDetailView(LoginRequiredMixin, DetailView):
+    """
+    Displays the details of a specific order for the logged-in user.
+
+    Ensures that only the orders belonging to the logged-in user can be accessed.
+    The view provides detailed information about the selected order, including
+    associated order items and their total price.
+    """
+
+    model = Order
+    template_name = 'orders/order_detail.html'
+    context_object_name = 'order'
+
+    def get_queryset(self):
+        """
+        Filters the queryset to include only orders belonging to the logged-in user.
+
+        This method ensures that users can only access their own orders, preventing
+        unauthorized access to other users' orders.
+        """
+        return Order.objects.filter(user=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        """
+        Adds order items and their total prices to the context.
+
+        This method retrieves all items associated with the order and calculates the
+        total price for each item (quantity * price). These items are then added to
+        the context, making them available for display in the template.
+        """
+        context = super().get_context_data(**kwargs)
+        order_items = self.object.items.all()
+        for item in order_items:
+            item.total_price = item.quantity * item.price
+        context['order_items'] = order_items
+        return context
 

@@ -94,3 +94,12 @@ class UserUpdateForm(forms.ModelForm):
             'avatar': forms.FileInput(attrs={'class': 'form-control'}),
             'bio': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Bio'}),
         }
+
+
+class UserProfileForm(UserChangeForm):
+    """
+    Form for users to view their profile information.
+    """
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email', 'avatar']

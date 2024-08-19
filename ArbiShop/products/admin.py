@@ -28,7 +28,7 @@ class CategoryAdmin(admin.ModelAdmin):
     """
     form = CategoryForm
     inlines = [ProductInline]
-    list_display = ['name', 'description']
+    list_display = ['name', 'description',"image", "featured"]
     search_fields = ['name']
 
 

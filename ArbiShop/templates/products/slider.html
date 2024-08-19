@@ -1,0 +1,46 @@
+<div id="carouselExampleFade" class="carousel slide carousel-fade" data-bs-ride="carousel">
+  <div class="carousel-indicators">
+    {% for category in featured_categories %}
+      <button type="button" data-bs-target="#carouselExampleFade" data-bs-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}" aria-current="{% if forloop.first %}true{% endif %}" aria-label="Slide {{ forloop.counter }}"></button>
+    {% endfor %}
+  </div>
+  <div class="carousel-inner">
+    {% for category in featured_categories %}
+    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+      <a href="{% url 'category-products' category.id %}">
+        <img src="{{ category.image.url }}" class="d-block w-100 carousel-image" alt="{{ category.name }}">
+        <div class="carousel-caption d-md-block">
+          <h5>{{ category.name }}</h5>
+        </div>
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+
+<style>
+.carousel-image {
+    height: 500px;
+    object-fit: cover; 
+}
+
+.carousel-caption {
+    background-color: rgba(0, 0, 0, 0.5); 
+    padding: 15px;
+    border-radius: 5px;
+}
+
+
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+</style>

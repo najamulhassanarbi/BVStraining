@@ -127,3 +127,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 STATICFILES_DIRS = ['static']
 LOGIN_REDIRECT_URL = 'products:product-list'
+
+JAZZMIN_SETTINGS = {
+    "site_title": "Arbishop",
+    "site_header": "Admin Portal",
+    "welcome_sign": "Welcome to Ultimate Power",
+
+}
+

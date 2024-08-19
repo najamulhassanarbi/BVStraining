@@ -1,0 +1,87 @@
+{% load widget_tweaks %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <div class="row">
+    <div class="col-md-3 col-sm-6 mb-4">
+    <div class="dropdown">
+        <a class="btn btn-primary dropdown-toggle w-100 py-3 h-100" href="#" id="categoryDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Products
+        </a>
+        <div class="dropdown-menu w-500 p-3" aria-labelledby="categoryDropdown" style="columns: 2; -webkit-columns: 2; -moz-columns: 2;">
+            {% for category in categories|slice:"4:" %}
+            <a class="dropdown-item py-2" href="{% url 'category-products' category.id %}">{{ category.name }}</a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+        <!-- Directly displayed categories -->
+        {% for category in categories|slice:":4" %}
+        <div class="col-md-2 col-sm-6 mb-4">
+            <a href="{% url 'category-products' category.id %}" class="text-decoration-none">
+                <div class="card text-center h-100 bg-black">
+                    <div class="card-body">
+                        <h5 class="card-title text-white">{{ category.name }}</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+
+        <!-- Dropdown for remaining categories -->
+
+    </div>
+</div>
+
+{% endblock %}
+
+<style>
+
+    .dropdown-menu {
+        background-color: #ffffff;
+        border-radius: 4px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .dropdown-item {
+        color: #007bff;
+        font-weight: 500;
+        padding: 8px 16px;
+        white-space: nowrap;
+        display: block;
+    }
+
+    .dropdown-item:hover {
+        background-color: #f0f0f0;
+        color: #0056b3;
+    }
+
+    .dropdown-toggle {
+        text-align: center;
+        padding: 10px 0;
+    }
+
+    .dropdown-menu[style*="columns: 2"] {
+        column-gap: 1rem;
+    }
+
+    .dropdown-item {
+        margin-bottom: 8px;
+    }
+
+
+    .card-title {
+        font-size: 1.2rem;
+    }
+
+    .card {
+        border: none;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease-in-out;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+</style>

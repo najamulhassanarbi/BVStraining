@@ -9,7 +9,6 @@ Classes:
     HomeView: Displays the home page to logged-in users.
     LogoutView: Handles user logout.
 """
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import PasswordResetView
 from django.contrib.messages.views import SuccessMessageMixin
@@ -20,12 +19,33 @@ from django.views import View
 from django.contrib.auth import get_user_model
 from django.http import HttpResponse
 from django.contrib import messages
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, UpdateView, TemplateView
 
-from users.forms import CustomUserCreationForm, LoginForm, UserUpdateForm
+from orders.models import Order
+from users.forms import CustomUserCreationForm, LoginForm, UserUpdateForm, UserProfileForm
 from users.utils import create_jwt_token
 
 User = get_user_model()
+
+
+class UserProfileView(LoginRequiredMixin, TemplateView):
+    """
+    Displays the user's profile and order history.
+
+    Renders the user's profile page with personal details and a list of their orders.
+    """
+
+    template_name = 'users/user_profile.html'
+
+    def get_context_data(self, **kwargs):
+        """
+        Adds the user and their orders to the context.
+        """
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['user'] = user
+        context['orders'] = Order.objects.filter(user=user)
+        return context
 
 
 class ProfileUpdateView(LoginRequiredMixin, UpdateView):
@@ -35,7 +55,7 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     model = User
     form_class = UserUpdateForm
     template_name = 'users/update_profile.html'
-    success_url = reverse_lazy('users:update_profile')
+    success_url = reverse_lazy('users:user-profile')
 
     def get_object(self):
         """
@@ -177,7 +197,7 @@ class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
     email_template_name = 'users/password_reset_email.html'
     subject_template_name = 'users/password_reset_subject.txt'
     success_message = "We've emailed you instructions for setting your password, " \
-        "if an account exists with the email you entered. You should receive them shortly." \
-        " If you don't receive an email, " \
-        "please make sure you've entered the address you registered with, and check your spam folder."
+                      "if an account exists with the email you entered. You should receive them shortly." \
+                      " If you don't receive an email, " \
+                      "please make sure you've entered the address you registered with, and check your spam folder."
     success_url = reverse_lazy('product-list')
