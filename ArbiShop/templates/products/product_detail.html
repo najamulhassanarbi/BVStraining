@@ -10,7 +10,8 @@
             <h1>{{ product.name }}</h1>
             <p class="text-muted">{{ product.category.name }}</p>
             <p>{{ product.description }}</p>
-            <h3 class="text-primary"><strong>Price:</strong> {{ product.price }}</h3>
+            <p class="mb-0 p-0 font-weight-bolder"> <strong>Price: </strong></p>
+            <p class=""> <strong>PKR: </strong> {{ product.price }}</p>
             <p><strong>Stock:</strong> {{ product.stock }}</p>
             <button id="add-to-cart-btn"
                 class="btn btn-success btn-lg mt-3"
