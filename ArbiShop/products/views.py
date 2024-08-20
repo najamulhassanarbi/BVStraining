@@ -7,13 +7,13 @@ Description:
     The views are implemented using Django's generic class-based views, with some requiring
     user authentication for access.
 """
-
+from django.shortcuts import get_object_or_404
 from django.views.generic import ListView, DetailView, TemplateView
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse_lazy
+from django_filters.views import FilterView
 
-from products.models import Product
+from products.models import Product, Category
 from products.filters import ProductFilter
+from products.utils import get_config_value
 
 
 class CartView(TemplateView):
@@ -24,15 +24,6 @@ class CartView(TemplateView):
     template_name = 'products/cart.html'
 
 
-class CheckoutView(LoginRequiredMixin, TemplateView):
-    """
-    Handles the checkout process, ensuring the user is logged in before
-    allowing them to proceed with purchasing the items in their cart.
-    """
-    template_name = 'products/checkout.html'
-    success_url = reverse_lazy('products:checkout')
-
-
 class ProductListView(ListView):
     """
     Displays a paginated list of all products available in the e-commerce platform.
@@ -40,16 +31,31 @@ class ProductListView(ListView):
     model = Product
     template_name = 'products/product_list.html'
     context_object_name = 'products'
-    paginate_by = 10
+    paginate_by = get_config_value("PRODUCTS_PER_PAGE")
+    print(paginate_by)
 
     def get_queryset(self):
+        """
+        Create Query for filtering
+        :return:
+        :rtype:
+        """
         queryset = super().get_queryset()
         self.filterset = ProductFilter(self.request.GET, queryset=queryset)
         return self.filterset.qs
 
     def get_context_data(self, **kwargs):
+        """
+        fetches the data and provide context data to the template
+        :param kwargs:
+        :type kwargs:
+        :return:
+        :rtype:
+        """
         context = super().get_context_data(**kwargs)
-        context['filterset'] = self.filterset
+        context['featured_categories'] = Category.objects.filter(featured=True)
+        context['categories'] = Category.objects.all()
+
         return context
 
 
@@ -61,3 +67,37 @@ class ProductDetailView(DetailView):
     model = Product
     template_name = 'products/product_detail.html'
     context_object_name = 'product'
+
+
+class CategoryProductsView(FilterView, ListView):
+    """
+    Shows a paginated and filtered list of products in a category.
+
+    Combines FilterView and ListView to display products in a specific category with filtering.
+    Also provides additional context for the current category and all available categories.
+    """
+
+    model = Product
+    template_name = 'products/category_product_listing.html'
+    context_object_name = 'products'
+    paginate_by = 12
+    filterset_class = ProductFilter
+
+    def get_queryset(self):
+        """
+        Filters products by the selected category and applies the filter set.
+        """
+        self.category = get_object_or_404(Category, id=self.kwargs['category_id'])
+        queryset = super().get_queryset().filter(category=self.category)
+        self.filterset = self.filterset_class(self.request.GET, queryset=queryset)
+        return self.filterset.qs
+
+    def get_context_data(self, **kwargs):
+        """
+        Adds the current category, filter set, and all categories to the context.
+        """
+        context = super().get_context_data(**kwargs)
+        context['category'] = self.category
+        context['filterset'] = self.filterset
+        context['categories'] = Category.objects.all()
+        return context

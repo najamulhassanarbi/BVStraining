@@ -9,7 +9,6 @@ Classes:
     HomeView: Displays the home page to logged-in users.
     LogoutView: Handles user logout.
 """
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import PasswordResetView
 from django.contrib.messages.views import SuccessMessageMixin
@@ -20,12 +19,35 @@ from django.views import View
 from django.contrib.auth import get_user_model
 from django.http import HttpResponse
 from django.contrib import messages
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import UpdateView, TemplateView
 
+from orders.models import Order
 from users.forms import CustomUserCreationForm, LoginForm, UserUpdateForm
 from users.utils import create_jwt_token
 
+from users.constants import PASSWORD_RESET_SUCCESS_MESSAGE, LOGIN_SUCCESS_MESSAGE
+
 User = get_user_model()
+
+
+class UserProfileView(LoginRequiredMixin, TemplateView):
+    """
+    Displays the user's profile and order history.
+
+    Renders the user's profile page with personal details and a list of their orders.
+    """
+
+    template_name = 'users/user_profile.html'
+
+    def get_context_data(self, **kwargs):
+        """
+        Adds the user and their orders to the context.
+        """
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['user'] = user
+        context['orders'] = Order.objects.filter(user=user)
+        return context
 
 
 class ProfileUpdateView(LoginRequiredMixin, UpdateView):
@@ -35,7 +57,7 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     model = User
     form_class = UserUpdateForm
     template_name = 'users/update_profile.html'
-    success_url = reverse_lazy('users:update_profile')
+    success_url = reverse_lazy('users:user-profile')
 
     def get_object(self):
         """
@@ -93,7 +115,7 @@ class SignUpView(View):
             user.set_password(form.cleaned_data['password1'])
             user.save()
             token = create_jwt_token(user)
-            response = redirect('products:product-list')
+            response = redirect('product-list')
             response.set_cookie('jwt', token)
             return response
         return render(request, 'users/signup.html', {'form': form})
@@ -138,10 +160,10 @@ class LoginView(View):
                 if user:
                     login(request, user)  # Log the user in
                     token = create_jwt_token(user)
-                    next_url = request.POST.get('next', 'products:product-list')
+                    next_url = request.POST.get('next', 'product-list')
                     response = redirect(next_url)
                     response.set_cookie('jwt', token)
-                    messages.success(request, 'Login Successful')
+                    messages.success(request, LOGIN_SUCCESS_MESSAGE)
                     return response
                 else:
                     return HttpResponse('Invalid credentials', status=401)
@@ -166,7 +188,7 @@ class LogoutView(View):
         :return: Redirects to login page
         :rtype: HttpResponse
         """
-        response = redirect('products:product-list')
+        response = redirect('product-list')
         response.delete_cookie('jwt')
         logout(request)
         return response
@@ -176,8 +198,5 @@ class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
     template_name = 'users/password_reset.html'
     email_template_name = 'users/password_reset_email.html'
     subject_template_name = 'users/password_reset_subject.txt'
-    success_message = "We've emailed you instructions for setting your password, " \
-        "if an account exists with the email you entered. You should receive them shortly." \
-        " If you don't receive an email, " \
-        "please make sure you've entered the address you registered with, and check your spam folder."
-    success_url = reverse_lazy('products:product-list')
+    success_message = PASSWORD_RESET_SUCCESS_MESSAGE
+    success_url = reverse_lazy('product-list')

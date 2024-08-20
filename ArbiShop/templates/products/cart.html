@@ -1,14 +1,13 @@
-{% extends 'users/base.html' %}
+{% extends 'users/../base.html' %}
 
 {% block content %}
 <div class="container mt-5">
     <h1>Your Cart</h1>
     <div id="cart-items" class="row">
-        <!-- Cart items will be dynamically inserted here -->
     </div>
     <div id="cart-summary" class="text-right mt-4">
         <h3>Total: <span id="cart-total"></span></h3>
-        <a href="{% url 'products:checkout' %}" class="btn btn-primary">Proceed to Checkout</a>
+        <a href="{% url 'orders:checkout' %}" class="btn btn-primary">Proceed to Checkout</a>
     </div>
 </div>
 
@@ -68,8 +67,6 @@
 
         document.getElementById('cart-total').textContent = cartTotal.toFixed(2);
         this.updateCheckoutButtonState();
-
-        // Attach event listeners to the remove buttons
         this.initRemoveItemListeners();
     }
 

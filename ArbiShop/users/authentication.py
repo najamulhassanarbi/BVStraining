@@ -11,6 +11,7 @@ from django.contrib.auth.backends import BaseBackend
 from django.contrib.auth.models import User
 from users.utils import decode_jwt_token
 
+
 class JWTAuthenticationBackend(BaseBackend):
     """
     Custom authentication backend that authenticates users based on a JWT token.
