@@ -1,4 +1,3 @@
-
 """
 File: products/forms.py
 
@@ -7,7 +6,7 @@ Description:
 """
 
 from django import forms
-from products.models import Product, Category
+from products.models import Product, Category, Config
 
 
 class CategoryForm(forms.ModelForm):
@@ -18,6 +17,16 @@ class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
         fields = ['name', 'description', "image", "featured"]
+
+
+class ConfigForm(forms.ModelForm):
+    """
+    Form for managing Config model fields in the admin.
+    """
+
+    class Meta:
+        model = Config
+        fields = ["key", "value"]
 
 
 class ProductForm(forms.ModelForm):

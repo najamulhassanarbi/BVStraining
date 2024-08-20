@@ -13,6 +13,7 @@ from django_filters.views import FilterView
 
 from products.models import Product, Category
 from products.filters import ProductFilter
+from products.utils import get_config_value
 
 
 class CartView(TemplateView):
@@ -30,7 +31,8 @@ class ProductListView(ListView):
     model = Product
     template_name = 'products/product_list.html'
     context_object_name = 'products'
-    paginate_by = 10
+    paginate_by = get_config_value("PRODUCTS_PER_PAGE")
+    print(paginate_by)
 
     def get_queryset(self):
         """

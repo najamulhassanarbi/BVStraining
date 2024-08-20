@@ -9,8 +9,8 @@ Description:
 """
 
 from django.contrib import admin
-from products.models import Product, Category
-from products.forms import CategoryForm, ProductForm
+from products.models import Product, Category,Config
+from products.forms import CategoryForm, ProductForm, ConfigForm
 
 
 class ProductInline(admin.TabularInline):
@@ -28,7 +28,7 @@ class CategoryAdmin(admin.ModelAdmin):
     """
     form = CategoryForm
     inlines = [ProductInline]
-    list_display = ['name', 'description',"image", "featured"]
+    list_display = ['name', 'description', "image", "featured"]
     search_fields = ['name']
 
 
@@ -43,5 +43,15 @@ class ProductAdmin(admin.ModelAdmin):
     date_hierarchy = 'created_at'
 
 
+class ConfigAdmin(admin.ModelAdmin):
+    """
+    Admin interface for managing configs
+    """
+    form = ConfigForm
+    list_display = ['key', 'value']
+    search_fields = ['key']
+
+
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Product, ProductAdmin)
+admin.site.register(Config, ConfigAdmin)

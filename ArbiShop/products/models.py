@@ -42,5 +42,20 @@ class Product(models.Model):
     is_active = models.BooleanField(default=True)
     image = models.ImageField(upload_to='product_images/', blank=True, null=True, max_length=1024)
 
+    class Meta:
+        ordering = ['id']
+
     def __str__(self):
         return self.name
+
+
+class Config(models.Model):
+    """
+
+    Model to store application configuration settings.
+    """
+    key = models.CharField(max_length=255, unique=True)
+    value = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f'{self.key}: {self.value}'
