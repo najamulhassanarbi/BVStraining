@@ -33,15 +33,26 @@ class ProductListView(ListView):
     paginate_by = 10
 
     def get_queryset(self):
+        """
+        Create Query for filtering
+        :return:
+        :rtype:
+        """
         queryset = super().get_queryset()
         self.filterset = ProductFilter(self.request.GET, queryset=queryset)
         return self.filterset.qs
 
     def get_context_data(self, **kwargs):
+        """
+        fetches the data and provide context data to the template
+        :param kwargs:
+        :type kwargs:
+        :return:
+        :rtype:
+        """
         context = super().get_context_data(**kwargs)
-        # Assuming you have a Category model
         context['featured_categories'] = Category.objects.filter(featured=True)
-        context["categories"] = Category.objects.all()
+        context['categories'] = Category.objects.all()
 
         return context
 
@@ -86,5 +97,5 @@ class CategoryProductsView(FilterView, ListView):
         context = super().get_context_data(**kwargs)
         context['category'] = self.category
         context['filterset'] = self.filterset
-        context["categories"] = Category.objects.all()
+        context['categories'] = Category.objects.all()
         return context

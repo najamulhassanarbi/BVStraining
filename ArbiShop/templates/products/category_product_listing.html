@@ -6,7 +6,6 @@
 <div class=" mt-4">
 {% include "category_listing.html" %}
     <div class="row">
-        <!-- Sidebar for filters -->
         <div class="col-md-3">
             <div class="card mb-4 mt-lg-5">
                 <div class="card-header bg-primary text-white">
@@ -34,8 +33,6 @@
                 </div>
             </div>
         </div>
-        
-        <!-- Main content area -->
         <div class="col-md-9">
             <div class="row">
                 <div class="col-12 my-4">
@@ -61,8 +58,6 @@
                 <p class="text-center">No products available.</p>
                 {% endfor %}
             </div>
-
-            <!-- Pagination -->
             {% if is_paginated %}
             <nav aria-label="Page navigation">
                 <ul class="pagination justify-content-center">

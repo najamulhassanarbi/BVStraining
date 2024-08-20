@@ -31,18 +31,18 @@ ALLOWED_HOSTS = []
 AUTH_USER_MODEL = "users.CustomUser"
 
 INSTALLED_APPS = [
-    "jazzmin",
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    "users",
-    "products",
-    "widget_tweaks",
-    "orders",
-    "django_countries",
+    'users',
+    'products',
+    'widget_tweaks',
+    'orders',
+    'django_countries',
 
 
 ]
@@ -115,7 +115,7 @@ LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Asia/Karachi'
 
 USE_I18N = True
-LOGIN_URL = "users:login"
+LOGIN_URL = 'users:login'
 
 USE_TZ = True
 
@@ -129,9 +129,9 @@ STATICFILES_DIRS = ['static']
 LOGIN_REDIRECT_URL = 'products:product-list'
 
 JAZZMIN_SETTINGS = {
-    "site_title": "Arbishop",
-    "site_header": "Admin Portal",
-    "welcome_sign": "Welcome to Ultimate Power",
+    'site_title': 'Arbishop',
+    'site_header': 'Admin Portal',
+    'welcome_sign': 'Welcome to Ultimate Power',
 
 }
 

@@ -16,7 +16,6 @@
         </div>
     </div>
 </div>
-        <!-- Directly displayed categories -->
         {% for category in categories|slice:":4" %}
         <div class="col-md-2 col-sm-6 mb-4">
             <a href="{% url 'category-products' category.id %}" class="text-decoration-none">
@@ -29,7 +28,7 @@
         </div>
         {% endfor %}
 
-        <!-- Dropdown for remaining categories -->
+    
 
     </div>
 </div>

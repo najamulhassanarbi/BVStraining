@@ -54,8 +54,7 @@ class PaymentView(LoginRequiredMixin, View):
 
         Renders the payment form where the user can enter their payment details.
         """
-        form = CheckoutForm()
-        return render(self.request, 'orders/payment.html', {'form': form})
+        return render(self.request, 'orders/payment.html', {'form': CheckoutForm()})
 
     def post(self, *args, **kwargs):
         """
@@ -66,15 +65,13 @@ class PaymentView(LoginRequiredMixin, View):
         various Stripe errors and provides appropriate feedback to the user.
         """
         form = CheckoutForm(self.request.POST)
-        print(self.request.POST)
         if form.is_valid():
             token = self.request.POST['stripeToken']
-            print(token)
             order = form.save(commit=False)
             order.user = self.request.user
             cart_data = self.request.POST.get('cart_data')
             if not cart_data:
-                return None, "Cart data is missing."
+                return None, 'Cart data is missing.'
 
             try:
                 cart_items = json.loads(cart_data)
@@ -95,11 +92,11 @@ class PaymentView(LoginRequiredMixin, View):
             try:
                 charge = stripe.Charge.create(
                     amount=total_amount,
-                    currency="pkr",
+                    currency='pkr',
                     source=token
                 )
 
-                if charge['status'] == 'succeeded':
+                if charge["status"] == "succeeded":
                     order.stripe_charge_id = charge['id']
                     order.payment_method = "card"
                     order.payment_amount = total_amount
@@ -110,11 +107,11 @@ class PaymentView(LoginRequiredMixin, View):
                 OrderItem.objects.bulk_create(order_items)
 
                 messages.success(self.request, "Your order was successful!")
-                return redirect("orders:order-success")
+                return redirect("orders:order_success")
 
             except stripe.error.CardError as e:
                 body = e.json_body
-                err = body.get('error', {})
+                err = body.get("error", {})
                 messages.warning(self.request, f"{err.get('message')}")
                 return redirect("orders:process_payment")
 
@@ -123,7 +120,6 @@ class PaymentView(LoginRequiredMixin, View):
                 return redirect("orders:process_payment")
 
             except stripe.error.InvalidRequestError as e:
-                print(e)
                 messages.warning(self.request, "Invalid parameters")
                 return redirect("orders:process_payment")
 

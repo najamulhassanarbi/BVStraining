@@ -19,11 +19,13 @@ from django.views import View
 from django.contrib.auth import get_user_model
 from django.http import HttpResponse
 from django.contrib import messages
-from django.views.generic import CreateView, UpdateView, TemplateView
+from django.views.generic import UpdateView, TemplateView
 
 from orders.models import Order
-from users.forms import CustomUserCreationForm, LoginForm, UserUpdateForm, UserProfileForm
+from users.forms import CustomUserCreationForm, LoginForm, UserUpdateForm
 from users.utils import create_jwt_token
+
+from users.constants import PASSWORD_RESET_SUCCESS_MESSAGE, LOGIN_SUCCESS_MESSAGE
 
 User = get_user_model()
 
@@ -161,7 +163,7 @@ class LoginView(View):
                     next_url = request.POST.get('next', 'product-list')
                     response = redirect(next_url)
                     response.set_cookie('jwt', token)
-                    messages.success(request, 'Login Successful')
+                    messages.success(request, LOGIN_SUCCESS_MESSAGE)
                     return response
                 else:
                     return HttpResponse('Invalid credentials', status=401)
@@ -196,8 +198,5 @@ class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
     template_name = 'users/password_reset.html'
     email_template_name = 'users/password_reset_email.html'
     subject_template_name = 'users/password_reset_subject.txt'
-    success_message = "We've emailed you instructions for setting your password, " \
-                      "if an account exists with the email you entered. You should receive them shortly." \
-                      " If you don't receive an email, " \
-                      "please make sure you've entered the address you registered with, and check your spam folder."
+    success_message = PASSWORD_RESET_SUCCESS_MESSAGE
     success_url = reverse_lazy('product-list')

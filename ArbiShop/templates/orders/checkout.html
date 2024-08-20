@@ -1,8 +1,6 @@
-<!-- checkout.html -->
+
 <form id="payment-form" method="POST" action="{% url 'orders:process_payment' %}">
     {% csrf_token %}
-    
-    <!-- Address fields -->
     <div>
         <label for="address_line_1">Address Line 1:</label>
         <input type="text" id="address_line_1" name="address_line_1" required>
@@ -27,8 +25,6 @@
         <label for="country">Country:</label>
         <input type="text" id="country" name="country" required>
     </div>
-    
-    <!-- Stripe Elements placeholder -->
     <div id="card-element"></div>
     <div id="card-errors" role="alert"></div>
     <input type="hidden" id="cart-data" name="cart_data">
@@ -71,8 +67,6 @@
         var form = document.getElementById('payment-form');
     form.addEventListener('submit', function(event) {
         event.preventDefault();
-
-        // Get cart data from local storage
         var cart = localStorage.getItem('cart');
         document.getElementById('cart-data').value = cart;
 

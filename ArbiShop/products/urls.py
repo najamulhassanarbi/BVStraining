@@ -17,5 +17,5 @@ urlpatterns = [
     path('category/<int:category_id>/', CategoryProductsView.as_view(), name='category-products'),
 
     path('cart/', CartView.as_view(), name='cart'),
-    path('orders/', include('orders.urls')),  # Include the orders app URLs
+    path('orders/', include('orders.urls')),
 ]
