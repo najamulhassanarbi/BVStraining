@@ -6,6 +6,7 @@ product management, and order items.
 """
 
 from django.urls import path
+
 from seller.views import (
     AddProductView,
     UpdateProductView,

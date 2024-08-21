@@ -5,6 +5,7 @@ Defines forms for managing products in the seller app.
 """
 
 from django import forms
+
 from products.models import Product, Category
 
 

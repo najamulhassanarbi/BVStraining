@@ -9,9 +9,11 @@ as well as viewing items ordered by customers.
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
+
 from products.models import Product
 from orders.models import OrderItem
 from seller.forms import ProductForm
+from products.utils import get_config_value
 
 
 class SellerDashboardView(LoginRequiredMixin, ListView):
@@ -19,7 +21,7 @@ class SellerDashboardView(LoginRequiredMixin, ListView):
     model = Product
     template_name = 'seller/product_listing.html'
     context_object_name = 'seller_products'
-    paginate_by = 10
+    paginate_by = get_config_value("PRODUCTS_PER_PAGE_SELLER")
 
     def get_queryset(self):
         """Return products filtered by the logged-in seller."""
@@ -39,7 +41,7 @@ class SellerOrderItemsView(LoginRequiredMixin, ListView):
     model = OrderItem
     template_name = 'seller/orders_listing.html'
     context_object_name = 'seller_products'
-    paginate_by = 10
+    paginate_by = get_config_value("ORDER_ITEMS_PER_PAGE")
 
     def get_queryset(self):
         """Return order items filtered by the logged-in seller."""
