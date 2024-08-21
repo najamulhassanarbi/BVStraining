@@ -10,7 +10,9 @@
                     <h5 class="card-title">{{ user.first_name }} {{ user.last_name }}</h5>
                     <p class="card-text">{{ user.email }}</p>
                     <p class="card-text">{{ user.bio }}</p>
-                    <a href="{% url 'users:update_profile' %}" class="btn btn-primary">Update Profile</a>
+                    <a href="{% url 'users:update_profile' %}" class="btn btn-primary mb-3">Update Profile</a>
+                    <a href="{% url 'seller:dashboard' %}" class="btn btn-primary">Go To Seller Dashboard</a>
+
                 </div>
             </div>
         </div>

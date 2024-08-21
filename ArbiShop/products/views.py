@@ -80,7 +80,7 @@ class CategoryProductsView(FilterView, ListView):
     model = Product
     template_name = 'products/category_product_listing.html'
     context_object_name = 'products'
-    paginate_by = 12
+    paginate_by = get_config_value("PRODUCTS_PER_PAGE")
     filterset_class = ProductFilter
 
     def get_queryset(self):
