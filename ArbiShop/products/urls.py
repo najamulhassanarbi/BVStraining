@@ -7,15 +7,15 @@ Description:
     and proceeding to checkout.
 """
 from django.urls import path, include
-from products.views import ProductListView, ProductDetailView, CartView, CategoryProductsView
+from products.views import ProductListView, ProductDetailView, CartView, CategoryProductsView, ReviewCreateView
 
 app_name = ''
 
 urlpatterns = [
     path('', ProductListView.as_view(), name='product-list'),
     path('product/<int:pk>/', ProductDetailView.as_view(), name='product-detail'),
+    path('product/<int:pk>/add_review/', ReviewCreateView.as_view(), name='add_review'),
     path('category/<int:category_id>/', CategoryProductsView.as_view(), name='category-products'),
-
     path('cart/', CartView.as_view(), name='cart'),
     path('orders/', include('orders.urls')),
 ]

@@ -9,8 +9,8 @@ Description:
 """
 
 from django.contrib import admin
-from products.models import Product, Category,Config
-from products.forms import CategoryForm, ProductForm, ConfigForm
+from products.models import Product, Category, Config, Review
+from products.forms import CategoryForm, ProductForm, ConfigForm, ReviewAdminForm
 
 
 class ProductInline(admin.TabularInline):
@@ -52,6 +52,22 @@ class ConfigAdmin(admin.ModelAdmin):
     search_fields = ['key']
 
 
+class ReviewAdmin(admin.ModelAdmin):
+    """
+    Admin interface for managing reviews
+    """
+    form = ReviewAdminForm
+    list_display = [
+        'product', 'user', 'rating', 'created_at'
+    ]
+    search_fields = [
+        'product__name', 'user__username', 'comment'
+    ]
+    list_filter = ['rating', 'created_at']
+    autocomplete_fields = ['product']
+
+
+admin.site.register(Review, ReviewAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Config, ConfigAdmin)
