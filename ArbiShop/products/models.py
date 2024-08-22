@@ -59,3 +59,24 @@ class Config(models.Model):
 
     def __str__(self):
         return f'{self.key}: {self.value}'
+
+
+class Review(models.Model):
+    """
+    Model representing a product review submitted by a user.
+    - Associates the review with a product and a user.
+    - Includes a rating, an optional comment, and a timestamp for when the review was created.
+    - Automatically deletes reviews if the associated product is deleted.
+    """
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    rating = models.PositiveIntegerField()
+    comment = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        """
+        Returns a string representation of the review, including the user's name,
+        the product name, and the rating.
+        """
+        return f'{self.user.first_name} {self.user.last_name} - {self.product.name} - {self.rating} stars'

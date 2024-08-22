@@ -53,7 +53,7 @@ class AddProductView(LoginRequiredMixin, CreateView):
     model = Product
     form_class = ProductForm
     template_name = 'seller/manage_product.html'
-    success_url = reverse_lazy('seller_dashboard')
+    success_url = reverse_lazy('seller:dashboard')
 
     def form_valid(self, form):
         """Set the seller of the product before saving."""
@@ -66,7 +66,7 @@ class UpdateProductView(LoginRequiredMixin, UpdateView):
     model = Product
     form_class = ProductForm
     template_name = 'seller/manage_product.html'
-    success_url = reverse_lazy('seller_dashboard')
+    success_url = reverse_lazy('seller:dashboard')
 
     def get_queryset(self):
         """Return the product filtered by the logged-in seller."""
@@ -78,7 +78,7 @@ class DeleteProductView(LoginRequiredMixin, DeleteView):
     """View for deleting a product by the seller."""
     model = Product
     template_name = 'seller/delete_product.html'
-    success_url = reverse_lazy('seller_dashboard')
+    success_url = reverse_lazy('seller:dashboard')
 
     def get_queryset(self):
         """Return the product filtered by the logged-in seller."""

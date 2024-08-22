@@ -7,13 +7,17 @@ Description:
     The views are implemented using Django's generic class-based views, with some requiring
     user authentication for access.
 """
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
-from django.views.generic import ListView, DetailView, TemplateView
+from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
+from django.views.generic import ListView, DetailView, TemplateView, CreateView
 from django_filters.views import FilterView
 
-from products.models import Product, Category
+from products.forms import ReviewForm
+from products.models import Product, Category, Review
 from products.filters import ProductFilter
-from products.utils import get_config_value
+from products.utils import get_config_value, user_can_review_product
 
 
 class CartView(TemplateView):
@@ -31,7 +35,7 @@ class ProductListView(ListView):
     model = Product
     template_name = 'products/product_list.html'
     context_object_name = 'products'
-    paginate_by = get_config_value("PRODUCTS_PER_PAGE")
+    paginate_by = 10
     print(paginate_by)
 
     def get_queryset(self):
@@ -68,6 +72,14 @@ class ProductDetailView(DetailView):
     template_name = 'products/product_detail.html'
     context_object_name = 'product'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        product = self.get_object()
+        context['reviews'] = Review.objects.filter(product=product).order_by('-created_at')
+        context['review_form'] = ReviewForm()
+
+        return context
+
 
 class CategoryProductsView(FilterView, ListView):
     """
@@ -80,7 +92,7 @@ class CategoryProductsView(FilterView, ListView):
     model = Product
     template_name = 'products/category_product_listing.html'
     context_object_name = 'products'
-    paginate_by = get_config_value("PRODUCTS_PER_PAGE")
+    paginate_by = 10
     filterset_class = ProductFilter
 
     def get_queryset(self):
@@ -101,3 +113,32 @@ class CategoryProductsView(FilterView, ListView):
         context['filterset'] = self.filterset
         context['categories'] = Category.objects.all()
         return context
+
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(user_can_review_product, name='dispatch')
+class ReviewCreateView(CreateView):
+    """
+    View to handle the creation of a new review by a user.
+    - Ensures the user is logged in and eligible to review the product.
+    - Associates the review with the current user and product.
+    - Redirects to the product detail page upon successful submission.
+    """
+    model = Review
+    form_class = ReviewForm
+
+    def form_valid(self, form):
+        """
+        Sets the user and product for the review before saving the form.
+        Associates the review with the current user and the product specified by 'pk'.
+        """
+        form.instance.user = self.request.user
+        form.instance.product = get_object_or_404(Product, id=self.kwargs['pk'])
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        """
+        Returns the URL to redirect to after a successful form submission.
+        Redirects to the product detail page of the reviewed product.
+        """
+        return reverse_lazy('product_detail', kwargs={'pk': self.kwargs['pk']})
