@@ -21,7 +21,8 @@ class SellerDashboardView(LoginRequiredMixin, ListView):
     model = Product
     template_name = 'seller/product_listing.html'
     context_object_name = 'seller_products'
-    paginate_by = get_config_value("PRODUCTS_PER_PAGE_SELLER")
+    # paginate_by = get_config_value("PRODUCTS_PER_PAGE_SELLER")
+    paginate_by = 10
 
     def get_queryset(self):
         """Return products filtered by the logged-in seller."""
@@ -41,7 +42,8 @@ class SellerOrderItemsView(LoginRequiredMixin, ListView):
     model = OrderItem
     template_name = 'seller/orders_listing.html'
     context_object_name = 'seller_products'
-    paginate_by = get_config_value("ORDER_ITEMS_PER_PAGE")
+    # paginate_by = get_config_value("ORDER_ITEMS_PER_PAGE")
+    paginate_by = 10
 
     def get_queryset(self):
         """Return order items filtered by the logged-in seller."""
