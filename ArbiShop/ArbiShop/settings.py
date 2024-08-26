@@ -26,7 +26,7 @@ STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
 
 stripe.api_key = STRIPE_SECRET_KEY
 
-ALLOWED_HOSTS = ["arbishop.onrender.com"]
+ALLOWED_HOSTS = ['arbishop.onrender.com', '127.0.0.1']
 
 AUTH_USER_MODEL = "users.CustomUser"
 
