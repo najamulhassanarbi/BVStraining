@@ -80,3 +80,17 @@ class Review(models.Model):
         the product name, and the rating.
         """
         return f'{self.user.first_name} {self.user.last_name} - {self.product.name} - {self.rating} stars'
+
+
+class Wishlist(models.Model):
+    """
+    Model representing a product wishlist.
+    """
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    products = models.ManyToManyField(Product, related_name='wishlists')
+
+    def __str__(self):
+        """
+        Returns a string representation product wishlist
+        """
+        return f"{self.user}'s Wishlist"

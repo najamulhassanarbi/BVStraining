@@ -8,14 +8,16 @@ Description:
     user authentication for access.
 """
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
+from django.views import View
 from django.views.generic import ListView, DetailView, TemplateView, CreateView
 from django_filters.views import FilterView
 
 from products.forms import ReviewForm
-from products.models import Product, Category, Review
+from products.models import Product, Category, Review, Wishlist
 from products.filters import ProductFilter
 from products.utils import get_config_value, user_can_review_product
 
@@ -36,13 +38,10 @@ class ProductListView(ListView):
     template_name = 'products/product_list.html'
     context_object_name = 'products'
     paginate_by = 10
-    print(paginate_by)
 
     def get_queryset(self):
         """
         Create Query for filtering
-        :return:
-        :rtype:
         """
         queryset = super().get_queryset()
         self.filterset = ProductFilter(self.request.GET, queryset=queryset)
@@ -51,14 +50,12 @@ class ProductListView(ListView):
     def get_context_data(self, **kwargs):
         """
         fetches the data and provide context data to the template
-        :param kwargs:
-        :type kwargs:
-        :return:
-        :rtype:
         """
         context = super().get_context_data(**kwargs)
         context['featured_categories'] = Category.objects.filter(featured=True)
         context['categories'] = Category.objects.all()
+        wishlist, created = Wishlist.objects.get_or_create(user=self.request.user)
+        context['wishlists'] = wishlist.products.all()
 
         return context
 
@@ -77,6 +74,8 @@ class ProductDetailView(DetailView):
         product = self.get_object()
         context['reviews'] = Review.objects.filter(product=product).order_by('-created_at')
         context['review_form'] = ReviewForm()
+        wishlist, created = Wishlist.objects.get_or_create(user=self.request.user)
+        context['wishlists'] = wishlist.products.all()
 
         return context
 
@@ -84,7 +83,6 @@ class ProductDetailView(DetailView):
 class CategoryProductsView(FilterView, ListView):
     """
     Shows a paginated and filtered list of products in a category.
-
     Combines FilterView and ListView to display products in a specific category with filtering.
     Also provides additional context for the current category and all available categories.
     """
@@ -112,6 +110,8 @@ class CategoryProductsView(FilterView, ListView):
         context['category'] = self.category
         context['filterset'] = self.filterset
         context['categories'] = Category.objects.all()
+        wishlist, created = Wishlist.objects.get_or_create(user=self.request.user)
+        context['wishlists'] = wishlist.products.all()
         return context
 
 
@@ -142,3 +142,30 @@ class ReviewCreateView(CreateView):
         Redirects to the product detail page of the reviewed product.
         """
         return reverse_lazy('product_detail', kwargs={'pk': self.kwargs['pk']})
+
+
+class WishlistView(LoginRequiredMixin, ListView):
+    template_name = 'wishlist/wishlist.html'
+    context_object_name = 'wishlist_items'
+
+    def get_queryset(self):
+        wishlist, created = Wishlist.objects.get_or_create(user=self.request.user)
+        return wishlist.products.all()
+
+
+class AddToWishlistView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        product_id = self.kwargs['product_id']
+        product = get_object_or_404(Product, id=product_id)
+        wishlist, created = Wishlist.objects.get_or_create(user=request.user)
+        wishlist.products.add(product)
+        return redirect(reverse_lazy('wishlist'))
+
+
+class RemoveFromWishlistView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        product_id = self.kwargs['product_id']
+        product = get_object_or_404(Product, id=product_id)
+        wishlist = get_object_or_404(Wishlist, user=request.user)
+        wishlist.products.remove(product)
+        return redirect(reverse_lazy('wishlist'))

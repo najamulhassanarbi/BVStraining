@@ -7,7 +7,8 @@ Description:
     and proceeding to checkout.
 """
 from django.urls import path, include
-from products.views import ProductListView, ProductDetailView, CartView, CategoryProductsView, ReviewCreateView
+from products.views import ProductListView, ProductDetailView, CartView, CategoryProductsView, ReviewCreateView, \
+    WishlistView, AddToWishlistView, RemoveFromWishlistView
 
 app_name = ''
 
@@ -18,4 +19,6 @@ urlpatterns = [
     path('category/<int:category_id>/', CategoryProductsView.as_view(), name='category-products'),
     path('cart/', CartView.as_view(), name='cart'),
     path('orders/', include('orders.urls')),
+    path('wishlist/add/<int:product_id>/', AddToWishlistView.as_view(), name='add_to_wishlist'),
+    path('wishlist/remove/<int:product_id>/', RemoveFromWishlistView.as_view(), name='remove_from_wishlist'),
 ]

@@ -1,0 +1,16 @@
+
+<h2>Your Wishlist</h2>
+
+<ul>
+  {% for product in wishlist_items %}
+    <li>
+      <a href="{% url 'product-detail' product.id %}">{{ product.name }}</a>
+      <form action="{% url 'remove_from_wishlist' product.id %}" method="post" style="display:inline;">
+          {% csrf_token %}
+          <button type="submit">Remove</button>
+      </form>
+    </li>
+  {% empty %}
+    <li>No products in your wishlist.</li>
+  {% endfor %}
+</ul>

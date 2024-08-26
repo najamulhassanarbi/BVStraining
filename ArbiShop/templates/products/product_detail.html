@@ -13,6 +13,7 @@
             <p class="mb-0 p-0 font-weight-bolder"><strong>Price: </strong></p>
             <p><strong>PKR: </strong> {{ product.price }}</p>
             <p><strong>Stock:</strong> {{ product.stock }}</p>
+            {% if product.stock > 0 %}
             <button id="add-to-cart-btn"
                 class="btn btn-success btn-lg mt-3"
                 data-product-id="{{ product.id }}"
@@ -21,6 +22,18 @@
                 data-product-image-url="{{ product.image }}">
                 Add to Cart
             </button>
+            {% endif %}
+            {% if product.stock == 0 %}
+                <form action="{% url 'add_to_wishlist' product.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary btn-lg my-2">Add to Wishlist</button>
+                </form>
+                
+                <form action="{% url 'remove_from_wishlist' product.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-lg">Remove from Wishlist</button>
+                </form>
+            {% endif %}
         </div>
     </div>
 
