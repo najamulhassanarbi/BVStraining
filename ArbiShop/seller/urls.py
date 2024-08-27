@@ -12,16 +12,21 @@ from seller.views import (
     UpdateProductView,
     DeleteProductView,
     SellerDashboardView,
-    SellerOrderItemsView
+    SellerOrderItemsView,
+    SellerChatRoomView,
+    SellerChatsView
 )
 
 app_name = 'seller'
 
 urlpatterns = [
+    path('chat/seller/room/<int:room_id>/', SellerChatRoomView.as_view(), name='seller_chat_room'),
+    path("chats", SellerChatsView.as_view(), name="chats"),
     path('dashboard/', SellerDashboardView.as_view(), name='dashboard'),
     path('dashboard/orders', SellerOrderItemsView.as_view(), name='orders'),
     path('dashboard/products', SellerDashboardView.as_view(), name='products'),
     path('dashboard/add-product/', AddProductView.as_view(), name='add_product'),
     path('dashboard/update-product/<int:pk>/', UpdateProductView.as_view(), name='update_product'),
     path('dashboard/delete-product/<int:pk>/', DeleteProductView.as_view(), name='delete_product'),
+
 ]

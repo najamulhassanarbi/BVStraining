@@ -30,13 +30,16 @@ ALLOWED_HOSTS = ['arbishop.onrender.com', '127.0.0.1']
 
 AUTH_USER_MODEL = "users.CustomUser"
 
+
 INSTALLED_APPS = [
     'jazzmin',
+    'chat',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'daphne',
     'django.contrib.staticfiles',
     'seller',
     'users',
@@ -44,6 +47,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'orders',
     'django_countries',
+    'channels',
 
 
 ]
@@ -85,6 +89,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'ArbiShop.wsgi.application'
+ASGI_APPLICATION = 'ArbiShop.asgi.application'
 
 DATABASES = {
     'default': {
@@ -139,5 +144,11 @@ JAZZMIN_SETTINGS = {
     'site_header': 'Admin Portal',
     'welcome_sign': 'Welcome to Ultimate Power',
 
+}
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
 }
 
