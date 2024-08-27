@@ -1,0 +1,93 @@
+
+<form id="payment-form" method="POST" action="{% url 'orders:process_payment' %}">
+    {% csrf_token %}
+    <div>
+        <label for="address_line_1">Address Line 1:</label>
+        <input type="text" id="address_line_1" name="address_line_1" required>
+    </div>
+    <div>
+        <label for="address_line_2">Address Line 2:</label>
+        <input type="text" id="address_line_2" name="address_line_2">
+    </div>
+    <div>
+        <label for="city">City:</label>
+        <input type="text" id="city" name="city" required>
+    </div>
+    <div>
+        <label for="state">State:</label>
+        <input type="text" id="state" name="state" required>
+    </div>
+    <div>
+        <label for="postal_code">Postal Code:</label>
+        <input type="text" id="postal_code" name="postal_code" required>
+    </div>
+    <div>
+        <label for="country">Country:</label>
+        <input type="text" id="country" name="country" required>
+    </div>
+    <div id="card-element"></div>
+    <div id="card-errors" role="alert"></div>
+    <input type="hidden" id="cart-data" name="cart_data">
+
+    <button type="submit">Pay</button>
+</form>
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    var stripe = Stripe('pk_test_51PmxHkKSeVleLwBsHSoyHGeqevzroDon1EPOYsmxFYNQY4xc4w6KPIrDIFAQhBUEDcQ5xVTnBY4iBt5fjuZOhbTc00F74sCE1x');
+    var elements = stripe.elements();
+
+    var style = {
+        base: {
+            color: '#32325d',
+            fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+            fontSmoothing: 'antialiased',
+            fontSize: '16px',
+            '::placeholder': {
+                color: '#aab7c4'
+            }
+        },
+        invalid: {
+            color: '#fa755a',
+            iconColor: '#fa755a'
+        }
+    };
+
+    var card = elements.create('card', {style: style});
+    card.mount('#card-element');
+
+    card.addEventListener('change', function(event) {
+        var displayError = document.getElementById('card-errors');
+        if (event.error) {
+            displayError.textContent = event.error.message;
+        } else {
+            displayError.textContent = '';
+        }
+    });
+
+        var form = document.getElementById('payment-form');
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        var cart = localStorage.getItem('cart');
+        document.getElementById('cart-data').value = cart;
+
+        stripe.createToken(card).then(function(result) {
+            if (result.error) {
+                var errorElement = document.getElementById('card-errors');
+                errorElement.textContent = result.error.message;
+            } else {
+                stripeTokenHandler(result.token);
+            }
+        });
+    });
+
+    function stripeTokenHandler(token) {
+        var form = document.getElementById('payment-form');
+        var hiddenInput = document.createElement('input');
+        hiddenInput.setAttribute('type', 'hidden');
+        hiddenInput.setAttribute('name', 'stripeToken');
+        hiddenInput.setAttribute('value', token.id);
+        form.appendChild(hiddenInput);
+
+        form.submit();
+    }
+</script>

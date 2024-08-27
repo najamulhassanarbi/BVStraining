@@ -1,0 +1,81 @@
+{% extends 'users/../base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Checkout</h1>
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Your Cart</h3>
+            <div id="cart-items">
+            </div>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <h3>Order Summary</h3>
+            <p><strong>Total Items:</strong> <span id="total-items"></span></p>
+            <p><strong>Total Price:</strong> $<span id="total-price"></span></p>
+            <a id="checkout-btn" href="{% url "orders:process_payment" %}" class="btn btn-primary btn-lg">Proceed to Payment</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    class Checkout {
+        constructor() {
+            this.cart = this.loadCart();
+            this.renderCartItems();
+            this.calculateTotal();
+        }
+
+        loadCart() {
+            return localStorage.getItem('cart') ? JSON.parse(localStorage.getItem('cart')) : {};
+        }
+
+        renderCartItems() {
+            let cartItemsContainer = document.getElementById('cart-items');
+            cartItemsContainer.innerHTML = '';
+
+            for (let productId in this.cart) {
+                let product = this.cart[productId];
+
+                let item = document.createElement('div');
+                item.classList.add('card', 'mb-3');
+                item.innerHTML = `
+                    <div class="row no-gutters">
+                        <div class="col-md-4">
+                            <img src="${product.image}" class="card-img" alt="${product.name}">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title">${product.name}</h5>
+                                <p class="card-text"><strong>Price:</strong> $${product.price}</p>
+                                <p class="card-text"><strong>Quantity:</strong> ${product.quantity}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                cartItemsContainer.appendChild(item);
+            }
+        }
+
+        calculateTotal() {
+            let totalItems = 0;
+            let totalPrice = 0;
+
+            for (let productId in this.cart) {
+                let product = this.cart[productId];
+                totalItems += product.quantity;
+                totalPrice += product.price * product.quantity;
+            }
+
+            document.getElementById('total-items').textContent = totalItems;
+            document.getElementById('total-price').textContent = totalPrice.toFixed(2);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const checkout = new Checkout();
+    });
+</script>
+{% endblock %}
