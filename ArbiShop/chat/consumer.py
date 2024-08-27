@@ -10,8 +10,6 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 
-from chat.models import ChatRoom, ChatMessage
-
 
 class SellerChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -33,7 +31,6 @@ class SellerChatConsumer(AsyncWebsocketConsumer):
         """
         Handles WebSocket disconnection. Removes the user from the room group.
         """
-
         await self.channel_layer.group_discard(
             self.room_group_name,
             self.channel_name
@@ -78,5 +75,6 @@ class SellerChatConsumer(AsyncWebsocketConsumer):
             room_id (str): The ID of the chat room.
             message (str): The message text to save.
         """
+        from chat.models import ChatRoom, ChatMessage
         chat_room = ChatRoom.objects.get(id=room_id)
         ChatMessage.objects.create(chat_room=chat_room, message=message)
