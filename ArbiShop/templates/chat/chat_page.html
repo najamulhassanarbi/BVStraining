@@ -29,7 +29,8 @@
     </div>
     <script>
         const roomID = "{{ chat_room.id }}";
-        const chatSocket = new WebSocket("ws://" + window.location.host + "/ws/" + roomID + "/");
+        const protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
+        const chatSocket = new WebSocket(protocol + window.location.host + "/ws/" + roomID + "/");
 
         chatSocket.onopen = function (e) {
             console.log("The connection was set up successfully!");
