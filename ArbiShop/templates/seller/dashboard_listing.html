@@ -17,6 +17,12 @@
                             <span>Products</span>
                         </a>
                     </li>
+                    <li class="nav-item mb-2">
+                            <a href="{% url 'seller:chats' %}" class="nav-link d-flex align-items-center text-dark {% if request.path == '/chats/' %}active{% endif %}">
+                                <i class="bi-grid fs-5 me-2"></i>
+                                <span>Chats</span>
+                            </a>
+                    </li>
                 </ul>
                 <hr>
             </div>
@@ -26,6 +32,7 @@
                 {% block products_list %} {% endblock %}
                 {% block add_update_product %} {% endblock %}
                 {% block orders_list %} {% endblock %}
+                {% block chats_list %} {% endblock %}
                                 
             </div>
         </div>
