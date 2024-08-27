@@ -67,5 +67,5 @@ class ChatRoomView(LoginRequiredMixin, TemplateView):
         messages = chat_room.messages.all().order_by('timestamp')
 
         context['chat_room'] = chat_room
-        context['messages'] = messages
+        context['chats'] = messages
         return context
